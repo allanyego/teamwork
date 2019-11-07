@@ -8,8 +8,8 @@ addons:
   postgresql: 9.6
 
 before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
   - psql travis_ci_test < test_db.pgsql
+  - psql -c 'create database travis_ci_test;' -U postgres
 
 env:
   - PGDATABASE=travis_ci_test
