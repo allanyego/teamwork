@@ -3,7 +3,8 @@ const { Pool } = require('pg');
 
 const pool = new Pool();
 
-console.log(process.env);
+const { PGDATABASE, PGUSER } = process.env;
+console.log(PGDATABASE, PGUSER);
 
 pool.connect((err) => {
   if (err) {
