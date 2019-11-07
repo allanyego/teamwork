@@ -9,7 +9,7 @@ addons:
 
 before_script:
   # - psql -c 'create user yego with password yego;' -U postgres
-  - psql -c 'create database team-test;' -U postgres
+  - psql -c "create database 'team-test';" -U postgres
   - psql team-test < test_db.pgsql -U postgres
 
 install:
