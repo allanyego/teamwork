@@ -3,6 +3,8 @@ const { Pool } = require('pg');
 
 const pool = new Pool();
 
+console.log(process.env);
+
 pool.connect((err) => {
   if (err) {
     console.log('DB error', err);
