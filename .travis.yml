@@ -8,13 +8,10 @@ addons:
   postgresql: 9.6
 
 before_script:
-  # - psql -c 'create user yego with password yego;' -U postgres
-  - createdb team_test -U postgres
-  # - psql -c "create database team_test;" -U postgres
-  - psql team_test < test_db.pgsql -U postgres
+  - psql -c 'create database travis_ci_test;' -U postgres
 
 env:
-  - PGDATABASE=test_team
+  - PGDATABASE=travis_ci_test
   - PGUSER=postgres
 
 install:
