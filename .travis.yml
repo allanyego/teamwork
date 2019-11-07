@@ -5,7 +5,7 @@ node_js:
 dist: trusty
 
 addons:
-  postgresql: 10
+  postgresql: 9.6
 
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
