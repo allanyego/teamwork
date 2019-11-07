@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon .",
     "test": "nyc jasmine --random=false",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov",
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "lint": "eslint '**/*.{js,jsx}' --quiet"
   },
   "author": "",
