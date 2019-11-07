@@ -1,5 +1,8 @@
 language: node_js
 
+install:
+  - npm install --build-from-resource
+
 script:
-- npm run test
-- npm run report-coverage
+  - npm run test
+  - npm run report-coverage
