@@ -1,4 +1,19 @@
 language: node_js
+node_js:
+  - node
+
+dist: trusty
+
+addons:
+  postgresql: 9.6
+
+before_script:
+  - createdb travis_ci_test -U postgres
+  - psql travis_ci_test < test_db.pgsql -U postgres
+  # - psql -c 'create database travis_ci_test;' -U postgres
+
+env:
+  - PGDATABASE=travis_ci_test PGUSER=postgres
 
 install:
   - npm install --build-from-source
