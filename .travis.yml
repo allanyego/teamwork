@@ -15,6 +15,7 @@ before_script:
 
 env:
   - PGDATABASE=test_team
+  - PGUSER=postgres
 
 install:
   - npm install --build-from-source
