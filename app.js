@@ -20,11 +20,6 @@ function cors() {
 
 const app = express();
 
-app.use((req, res, next) => {
-  console.log('I am getting a request', req.path);
-  next();
-});
-
 app.use(boom());
 app.use(cors());
 app.use(bodyParser.json());
