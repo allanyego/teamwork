@@ -2,10 +2,12 @@ language: node_js
 node_js:
   - node
 
-services:
-  - postgresql
-# addons:
-#   postgresql: "10"
+addons:
+  postgresql: "10"
+  apt:
+    packages:
+    - postgresql-10
+    - postgresql-client-10
 
 before_script:
   - psql
