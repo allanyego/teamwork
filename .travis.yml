@@ -9,6 +9,7 @@ addons:
 
 before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
+  - psql travis_ci_test < test_db.pgsql
 
 env:
   - PGDATABASE=travis_ci_test
