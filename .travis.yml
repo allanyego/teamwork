@@ -8,6 +8,7 @@ addons:
   postgresql: 9.6
 
 before_script:
+  - createdb travis_ci_test
   - psql travis_ci_test < test_db.pgsql
   # - psql -c 'create database travis_ci_test;' -U postgres
 
