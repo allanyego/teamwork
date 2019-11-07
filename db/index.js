@@ -5,7 +5,7 @@ const pool = new Pool();
 
 pool.connect((err) => {
   if (err) {
-    console.log('DB error', err.message);
+    console.log('DB error', err);
     console.log('Are you sure your DB server is up?');
   }
 });
