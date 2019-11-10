@@ -31,7 +31,7 @@ const create = async (user) => new Promise((resolve, reject) => {
 });
 
 const find = async (opts) => {
-  const { email, username, id } = opts;
+  const { email, username } = opts;
   let findQuery = 'SELECT * FROM users';
   const values = [];
   let varCounter = 1;
@@ -49,12 +49,6 @@ const find = async (opts) => {
     isWhered = true;
     varCounter += 1;
   }
-  if (id) {
-    findQuery += `${isWhered ? ' AND' : ' WHERE'} (id=$${varCounter})`;
-    values.push(username);
-    isWhered = true;
-    varCounter += 1;
-  }
 
   return new Promise((resolve, reject) => {
     query(findQuery, values, (err, { rows }) => {
@@ -66,8 +60,21 @@ const find = async (opts) => {
   });
 };
 
+const findById = (id) => new Promise((resolve, reject) => {
+  query(
+    'SELECT * FROM users WHERE (id=$1) LIMIT 1',
+    [id],
+    (err, { rows }) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(rows[0]);
+    },
+  );
+});
 
 module.exports = {
   create,
   find,
+  findById,
 };

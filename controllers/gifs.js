@@ -35,7 +35,6 @@ async function create(req, res, next) {
       category, title, userId,
     } = req.body;
     const values = [image.public_id, category, title, image.secure_url, userId];
-
     const fetchNewGifQuery = 'SELECT g.id, g.title, g.image, u.id as userid,'
       + ' u.username, c.id as categoryid, c.name as categoryname FROM gifs g'
       + ' JOIN users u ON'
@@ -180,14 +179,14 @@ async function edit(req, res, next) {
 
     await query(updateQuery, values);
 
-    const fetchNewGifQuery = 'SELECT g.id, g.title, g.image, u.id as userid,'
+    const fetchUpdatedGifQuery = 'SELECT g.id, g.title, g.image, u.id as userid,'
       + ' u.username, c.id as categoryid, c.name as categoryname FROM gifs g'
       + ' JOIN users u ON'
       + ' (u.id=g.user_id) JOIN categories c ON (c.id=g.category) WHERE (g.id=$1)';
-    const theNewGif = await query(fetchNewGifQuery, [req.params.id]);
+    const theUpdatedGif = await query(fetchUpdatedGifQuery, [req.params.id]);
     const {
       userid, username, categoryid, categoryname, ...rest
-    } = theNewGif.rows[0];
+    } = theUpdatedGif.rows[0];
 
     return res.status(200).json({
       status: 'success',
@@ -237,7 +236,7 @@ async function destroy(req, res) {
     try {
       // Delete related comments
       await client.query(
-        'DELETE FROM comments WHERE id IN (SELECT comment FROM '
+        'DELETE FROM comments c WHERE c.id IN (SELECT comment FROM '
         + 'gif_comments gc WHERE (gc.gif=$1))',
         [req.params.id],
       );

@@ -1,24 +1,24 @@
 const Joi = require('@hapi/joi');
 
-const editSchema = Joi.object({
+const edit = Joi.object({
   id: Joi.string().guid({ version: 'uuidv1' }).required(),
   category: Joi.string().guid({ version: 'uuidv1' }),
   title: Joi.string(),
   text: Joi.string(),
 })
   .or('category', 'title', 'text')
-  .without('id', 'user');
+  .without('id', 'userId');
 
-const addSchema = Joi.object({
-  category: Joi.string().guid({ version: 'uuidv1' }),
+const add = Joi.object({
+  category: Joi.string().guid({ version: 'uuidv1' }).required(),
   title: Joi.string().required(),
   text: Joi.string().required(),
-  user: Joi.string().guid({ version: 'uuidv1' }).required(),
+  userId: Joi.string().guid({ version: 'uuidv1' }).required(),
 })
-  .and('title', 'text', 'user')
-  .without('id', 'user');
+  .and('title', 'text', 'userId')
+  .without('id', 'userId');
 
 module.exports = {
-  editSchema,
-  addSchema,
+  edit,
+  add,
 };
