@@ -33,7 +33,7 @@ describe('/auth', () => {
   });
 
   describe('/signin', () => {
-    it('should respond with created user', async (done) => {
+    it('should respond with authenticated user', async (done) => {
       request(server)
         .post('/api/v1/auth/signin')
         .send(this.admin)
