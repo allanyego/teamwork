@@ -166,8 +166,8 @@ async function edit(req, res, next) {
   }
 
   try {
-    const updateQuery = 'UPDATE gifs SET id=$1, category=$4, title=$2, '
-      + 'image=$3 where (id=$4)';
+    const updateQuery = 'UPDATE gifs SET id=$1, category=$2, title=$3, '
+      + 'image=$4 WHERE (id=$5)';
     const {
       category, title,
     } = req.body;
@@ -175,7 +175,9 @@ async function edit(req, res, next) {
       publicId || gif.id,
       category || gif.category,
       title || gif.title,
-      secureUrl || gif.image];
+      secureUrl || gif.image,
+      req.params.id,
+    ];
 
     await query(updateQuery, values);
 

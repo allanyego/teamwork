@@ -93,14 +93,14 @@ describe('/articles', () => {
         });
     });
   });
-  xdescribe('GET /:id', () => {
-    it('should respond with gif with specified id', (done) => {
+  describe('GET /:id', () => {
+    it('should respond with article with specified id', (done) => {
       request(server)
-        .get(`/api/v1/gifs/${this.gif.id}`)
+        .get(`/api/v1/articles/${this.article.id}`)
         .expect(200)
         .then((resp) => {
           const { data } = resp.body;
-          expect(data.title).toEqual(this.gif.title);
+          expect(data.title).toEqual(this.article.title);
           done();
         })
         .catch((err) => {
@@ -108,18 +108,18 @@ describe('/articles', () => {
         });
     });
   });
-  xdescribe('PATCH /:id', () => {
-    it('should respond with updated gif', (done) => {
-      const newTitle = 'I had to change this gif';
+  describe('PATCH /:id', () => {
+    it('should respond with updated article', (done) => {
+      const newTitle = 'I had to change this article';
       request(server)
-        .patch(`/api/v1/gifs/${this.gif.id}`)
-        .field('title', newTitle)
-        .field('image', 'new gif image')
-        .attach('image', `${__dirname}/bikey1.gif`)
+        .patch(`/api/v1/articles/${this.article.id}`)
+        .set('Authorization', `Bearer ${this.userToken}`)
+        .send({ title: newTitle })
         .expect(200)
         .then((resp) => {
           const { data } = resp.body;
           expect(data.title).toEqual(newTitle);
+          this.article = data;
           done();
         })
         .catch((err) => {
