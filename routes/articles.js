@@ -2,7 +2,7 @@ const express = require('express');
 
 const {
   create,
-  // edit,
+  edit,
   find,
   findById,
   // destroy,
@@ -17,7 +17,7 @@ articlesRouter.get('/', find);
 articlesRouter.get('/:id', findById);
 // articlesRouter.post('/:id/comment', commentCtrl.create);
 articlesRouter.post('/', auth, create);
-// articlesRouter.patch('/:id', edit);
+articlesRouter.patch('/:id', auth, edit);
 // articlesRouter.delete('/:id', destroy);
 
 module.exports = {

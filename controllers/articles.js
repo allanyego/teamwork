@@ -44,7 +44,7 @@ async function findById(req, res, next) {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) {
-      return res.boom.notFound('No article by that id.');
+      return res.boom.notFound('No article by that identifier.');
     }
 
     return res.json({
@@ -57,56 +57,37 @@ async function findById(req, res, next) {
 }
 
 /**
-//  * EDIT gif post
-//  */
-// async function edit(req, res, next) {
-//   const theGif = await query('SELECT * FROM gif WHERE id=$1', [req.params.id]);
-//   if (!theGif.rows.length) {
-//     return res.boom.notFound('No gif by that identifier');
-//   }
-//
-//   const { error/* , */ } = schema.edit.validate(req.body);
-//   if (error) {
-//     return res.boom.badData(error.message);
-//   }
-//
-//   const gif = theGif.rows[0];
-//   let publicId;
-//   let secureUrl;
-//
-//   if (req.file) {
-//     const file = dataUri(req).content;
-//     await cloudinary.uploader.destroy(gif.id);
-//
-//     try {
-//       const image = await cloudinary.uploader.upload(file);
-//       publicId = image.public_id;
-//       secureUrl = image.secure_url;
-//     } catch (e) {
-//       return next(e);
-//     }
-//   }
-//
-//   try {
-//     const updateQuery = 'UPDATE gifs SET id=$1, category=$4, title=$2, '
-//       + 'image=$3 where (id=$4)';
-//     const {
-//       category, title,
-//     } = req.body;
-//     const values = [
-//       publicId || gif.id,
-//       category, title,
-//       secureUrl || gif.image];
-//
-//     const newGif = await query(updateQuery, values);
-//     return res.json({
-//       status: 'success',
-//       data: newGif.rows[0],
-//     });
-//   } catch (err) {
-//     return next(err);
-//   }
-// }
+ * EDIT gif post
+ */
+async function edit(req, res, next) {
+  const anArticle = await Article.findById(req.params.id);
+  if (!anArticle) {
+    return res.boom.notFound('No article by that identifier');
+  }
+
+  const { error/* , */ } = schema.edit.validate(req.body);
+  if (error) {
+    return res.boom.badData(error.message);
+  }
+
+  try {
+    const {
+      category: { id: category },
+      ...rest
+    } = anArticle;
+    const newArticleDetails = {
+      ...rest, category, ...req.body,
+    };
+
+    const updatedArticle = await Article.update(newArticleDetails);
+    return res.json({
+      status: 'success',
+      data: updatedArticle,
+    });
+  } catch (err) {
+    return next(err);
+  }
+}
 //
 // /**
 //  * DELETE gif post
@@ -175,6 +156,6 @@ module.exports = {
   create,
   find,
   findById,
-  // edit,
+  edit,
   // destroy,
 };

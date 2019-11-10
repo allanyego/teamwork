@@ -61,10 +61,10 @@ const find = async () => new Promise((resolve, reject) => {
 });
 
 const findById = (id) => new Promise((resolve, reject) => {
-  const findQuery = 'SELECT a.id, a.title, a.text, c.id as categoryid, c.name '
-    + 'AS categoryname, u.id as userid, u.username FROM gifs g JOIN categories c'
-    + ' ON (a.category=c.id) JOIN users u ON (a.user_id=u.id) WHERE (a.id=$1) '
-    + 'LIMIT 1';
+  const findQuery = 'SELECT a.id, a.title, a.text, a.created_at, a.updated_at, '
+    + 'u.id AS uid, u.username, c.id AS catid, c.name AS catname FROM '
+    + 'articles a JOIN users u ON (u.id=a.user_id) JOIN categories c ON '
+    + '(c.id=a.category) WHERE (a.id=$1) LIMIT 1';
   query(
     findQuery,
     [id],
@@ -76,16 +76,29 @@ const findById = (id) => new Promise((resolve, reject) => {
         resolve(null);
       }
       const {
-        userid, username, categoryid, categoryname, ...rest
+        uid, username, catid, catname, ...rest
       } = rows[0];
+
       return resolve({
         ...rest,
-        category: { name: categoryname, id: categoryid },
-        user: { username, id: userid },
+        category: { name: catname, id: catid },
+        user: { id: uid, username },
       });
     },
   );
 });
+
+const update = async ({
+  id, text, title, category,
+}) => {
+  const updateQuery = 'UPDATE articles SET category=$1, title=$2, text=$3 '
+    + 'WHERE (id=$4)';
+  const values = [category, title, text, id];
+
+  await query(updateQuery, values);
+  const updatedArticle = await findById(id);
+  return updatedArticle;
+};
 
 const destroy = async (id) => {
   const client = await pool.connect();
@@ -126,6 +139,7 @@ const destroy = async (id) => {
 module.exports = {
   find,
   findById,
+  update,
   destroy,
   create,
 };
