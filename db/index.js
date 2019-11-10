@@ -3,14 +3,17 @@ const { Pool } = require('pg');
 
 const pool = new Pool();
 
+const { PGDATABASE, PGUSER } = process.env;
+console.log(PGDATABASE, PGUSER);
+
 pool.connect((err) => {
   if (err) {
-    console.log('DB error', err.message);
+    console.log('DB error', err);
     console.log('Are you sure your DB server is up?');
   }
 });
 
 module.exports = {
-  query: (text, params) => pool.query(text, params),
+  query: (text, params, cb) => pool.query(text, params, cb),
   pool,
 };
