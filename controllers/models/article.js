@@ -34,14 +34,21 @@ const create = async (article) => new Promise((resolve, reject) => {
   });
 });
 
-const find = async () => new Promise((resolve, reject) => {
-  // Room for improvement here with query/path parameters
-  const findQuery = 'SELECT a.id, a.title, a.text, a.created_at, a.updated_at, '
+const find = async ({ category }) => new Promise((resolve, reject) => {
+  const values = [];
+  let findQuery = 'SELECT a.id, a.title, a.text, a.created_at, a.updated_at, '
     + 'c.id as cat_id, c.name AS cat_name, u.id as u_id, u.username '
     + 'FROM articles a JOIN categories c ON (a.category=c.id) JOIN users u ON '
-    + '(a.user_id=u.id) ORDER BY a.created_at DESC';
+    + '(a.user_id=u.id)';
 
-  query(findQuery, (err, { rows }) => {
+  if (category) {
+    findQuery += ' WHERE (c.name=$1)';
+    values.push(category);
+  }
+
+  findQuery += ' ORDER BY a.created_at DESC';
+
+  query(findQuery, values, (err, { rows }) => {
     if (err) {
       return reject(err);
     }

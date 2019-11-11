@@ -1,11 +1,3 @@
-class Comment {
-  create() {
-
-  }
-}
-
-
-
 const uuid = require('uuid/v1');
 
 const { query, pool } = require('../db');

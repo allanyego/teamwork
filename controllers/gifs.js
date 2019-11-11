@@ -5,6 +5,40 @@ const { dataUri } = require('./helpers/data-uri');
 const schema = require('./schemas/gif');
 
 /**
+ * GET gif post by id
+ */
+
+const fbyId = async (id) => {
+  const fetchGifQuery = 'SELECT g.id, g.title, g.image, g.created_at, '
+    + 'g.updated_at, u.id as u_id, u.username, c.id as cat_id, c.name as '
+    + 'cat_name FROM gifs g JOIN users u ON (u.id=g.user_id) JOIN '
+    + 'categories c ON (c.id=g.category) WHERE (g.id=$1) LIMIT 1';
+  const theGif = await query(fetchGifQuery, [id]);
+
+  if (!theGif.rows.length) {
+    return null;
+  }
+
+  const {
+    u_id: userId, username, cat_id: categoryId, cat_name: categoryName,
+    created_at: createdAt, updated_at: updatedAt,
+    ...rest
+  } = theGif.rows[0];
+
+  return {
+    ...rest,
+    createdAt,
+    updatedAt,
+    user: {
+      id: userId, username,
+    },
+    category: {
+      id: categoryId, name: categoryName,
+    },
+  };
+};
+
+/**
  * POST a new gif post
  */
 async function create(req, res, next) {
@@ -35,30 +69,14 @@ async function create(req, res, next) {
       category, title, userId,
     } = req.body;
     const values = [image.public_id, category, title, image.secure_url, userId];
-    const fetchNewGifQuery = 'SELECT g.id, g.title, g.image, u.id as userid,'
-      + ' u.username, c.id as categoryid, c.name as categoryname FROM gifs g'
-      + ' JOIN users u ON'
-      + ' (u.id=g.user_id) JOIN categories c ON (c.id=g.category) WHERE (g.id=$1)';
 
     try {
       await query(insertNewGifQuery, values);
 
-      const theNewGif = await query(fetchNewGifQuery, [image.public_id]);
-      const {
-        userid, username, categoryid, categoryname, ...rest
-      } = theNewGif.rows[0];
-
+      const theNewGif = await fbyId(image.public_id);
       return res.status(201).json({
         status: 'success',
-        data: {
-          ...rest,
-          user: {
-            id: userid, username,
-          },
-          category: {
-            id: categoryid, name: categoryname,
-          },
-        },
+        data: theNewGif,
       });
     } catch (err) {
       console.log('ERROR', err);
@@ -74,13 +92,21 @@ async function create(req, res, next) {
  * GET all gif posts
  */
 async function find(req, res, next) {
-  const findQuery = 'SELECT g.id, g.title, g.image, g.created_at, g.updated_at, '
+  const { category } = req.query;
+  const values = [];
+  let findQuery = 'SELECT g.id, g.title, g.image, g.created_at, g.updated_at, '
     + ' c.id as cat_id, c.name AS cat_name, u.id as u_id, u.username FROM '
     + 'gifs g JOIN categories c ON (g.category=c.id) JOIN users u ON '
-    + '(g.user_id=u.id) ORDER BY g.created_at DESC';
+    + '(g.user_id=u.id)';
+
+  if (category) {
+    findQuery += ' WHERE (c.name=$1)';
+    values.push(category);
+  }
+  findQuery += ' ORDER BY g.created_at DESC';
 
   try {
-    const foundGifs = await query(findQuery);
+    const foundGifs = await query(findQuery, values);
     // Map through each row and returning a nested object
     const resGifs = foundGifs.rows.map((row) => {
       const {
@@ -105,39 +131,14 @@ async function find(req, res, next) {
   }
 }
 
-/**
- * GET gif post by id
- */
 async function findById(req, res) {
-  const fetchGifQuery = 'SELECT g.id, g.title, g.image, g.created_at, '
-    + 'g.updated_at, u.id as u_id, u.username, c.id as cat_id, c.name as '
-    + 'cat_name FROM gifs g JOIN users u ON (u.id=g.user_id) JOIN '
-    + 'categories c ON (c.id=g.category) WHERE (g.id=$1) LIMIT 1';
-  const theGif = await query(fetchGifQuery, [req.params.id]);
-
-  if (!theGif.rows.length) {
+  const gif = await fbyId(req.params.id);
+  if (!gif) {
     return res.boom.noFound('No gif by that identifier.');
   }
-
-  const {
-    u_id: userId, username, cat_id: categoryId, cat_name: categoryName,
-    created_at: createdAt, updated_at: updatedAt,
-    ...rest
-  } = theGif.rows[0];
-
   return res.status(200).json({
     status: 'success',
-    data: {
-      ...rest,
-      createdAt,
-      updatedAt,
-      user: {
-        id: userId, username,
-      },
-      category: {
-        id: categoryId, name: categoryName,
-      },
-    },
+    data: gif,
   });
 }
 
@@ -145,8 +146,8 @@ async function findById(req, res) {
  * EDIT gif post
  */
 async function edit(req, res, next) {
-  const theGif = await query('SELECT * FROM gif WHERE id=$1', [req.params.id]);
-  if (!theGif.rows.length) {
+  const aGif = await fbyId(req.params.id);
+  if (!aGif) {
     return res.boom.notFound('No gif by that identifier');
   }
 
@@ -155,61 +156,50 @@ async function edit(req, res, next) {
     return res.boom.badData(error.message);
   }
 
-  const gif = theGif.rows[0];
+  if (aGif.user.id !== req.body.userId) {
+    return res.json({
+      status: 'error',
+      error: 'You can only edit your articles.',
+    });
+  }
   let publicId;
   let secureUrl;
 
   if (req.file) {
     const file = dataUri(req).content;
-    await cloudinary.uploader.destroy(gif.id);
+    await cloudinary.uploader.destroy(aGif.id);
 
     try {
       const image = await cloudinary.uploader.upload(file);
       publicId = image.public_id;
       secureUrl = image.secure_url;
     } catch (e) {
+      console.log('cloudinary error', e);
       return next(e);
     }
   }
 
   try {
-    const updateQuery = 'UPDATE gifs SET id=$1, category=$2, title=$3, '
-      + 'image=$4 WHERE (id=$5)';
-    const {
-      category, title,
-    } = req.body;
+    const updateQuery = 'UPDATE gifs SET id=$1, title=$2, '
+      + 'image=$3 WHERE (id=$4)';
+    const { title } = req.body;
+    const theNewId = publicId || aGif.id;
     const values = [
-      publicId || gif.id,
-      category || gif.category,
-      title || gif.title,
-      secureUrl || gif.image,
-      req.params.id,
+      theNewId,
+      title || aGif.title,
+      secureUrl || aGif.image,
+      aGif.id,
     ];
-
+    // console.log('Will change ID from %s to %s', aGif.id, publicId);
     await query(updateQuery, values);
-
-    const fetchUpdatedGifQuery = 'SELECT g.id, g.title, g.image, u.id as userid,'
-      + ' u.username, c.id as categoryid, c.name as categoryname FROM gifs g'
-      + ' JOIN users u ON'
-      + ' (u.id=g.user_id) JOIN categories c ON (c.id=g.category) WHERE (g.id=$1)';
-    const theUpdatedGif = await query(fetchUpdatedGifQuery, [req.params.id]);
-    const {
-      userid, username, categoryid, categoryname, ...rest
-    } = theUpdatedGif.rows[0];
+    const theUpdatedGif = await fbyId(theNewId);
 
     return res.status(200).json({
       status: 'success',
-      data: {
-        ...rest,
-        user: {
-          id: userid, username,
-        },
-        category: {
-          id: categoryid, name: categoryname,
-        },
-      },
+      data: theUpdatedGif,
     });
   } catch (err) {
+    console.log('Update error', err);
     return next(err);
   }
 }
