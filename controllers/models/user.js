@@ -2,6 +2,19 @@ const uuid = require('uuid/v1');
 
 const { query } = require('../../db');
 
+const findById = (id) => new Promise((resolve, reject) => {
+  query(
+    'SELECT * FROM users WHERE (id=$1) LIMIT 1',
+    [id],
+    (err, { rows }) => {
+      if (err) {
+        return reject(err);
+      }
+      return resolve(rows[0]);
+    },
+  );
+});
+
 const create = async (user) => new Promise((resolve, reject) => {
   const userId = uuid();
   const insertQuery = 'INSERT INTO users'
@@ -19,14 +32,9 @@ const create = async (user) => new Promise((resolve, reject) => {
       return reject(err);
     }
 
-    return query(
-      'SELECT * FROM users WHERE (id=$1)',
-      [userId],
-      (_err, usersRes) => {
-        const [theUser] = usersRes.rows;
-        resolve(theUser);
-      },
-    );
+    return findById(userId)
+      .then(resolve)
+      .catch(reject);
   });
 });
 
@@ -44,7 +52,7 @@ const find = async (opts) => {
     varCounter += 1;
   }
   if (username) {
-    findQuery += `${isWhered ? ' AND' : ' WHERE'} (username=$${varCounter})`;
+    findQuery += `${isWhered ? ' OR' : ' WHERE'} (username=$${varCounter})`;
     values.push(username);
     isWhered = true;
     varCounter += 1;
@@ -55,26 +63,38 @@ const find = async (opts) => {
       if (err) {
         return reject(err);
       }
-      return resolve(rows);
+
+      return resolve(Array.from(rows));
     });
   });
 };
 
-const findById = (id) => new Promise((resolve, reject) => {
-  query(
-    'SELECT * FROM users WHERE (id=$1) LIMIT 1',
-    [id],
-    (err, { rows }) => {
-      if (err) {
-        return reject(err);
-      }
-      return resolve(rows[0]);
-    },
-  );
+const update = async (user) => new Promise((resolve, reject) => {
+  const insertQuery = 'UPDATE users SET '
+    + 'first_name=$1, last_name=$2, email=$3, username=$4, role=$5, '
+    + 'department=$6, type=$7 WHERE (id=$8)';
+
+  const {
+    firstName, lastName, username, email, type,
+    role, department, id,
+  } = user;
+  const values = [
+    firstName, lastName, email, username, role, department, type, id,
+  ];
+  query(insertQuery, values, (err) => {
+    if (err) {
+      return reject(err);
+    }
+
+    return findById(id)
+      .then(resolve)
+      .catch(reject);
+  });
 });
 
 module.exports = {
+  findById,
   create,
   find,
-  findById,
+  update,
 };
