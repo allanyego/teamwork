@@ -13,8 +13,7 @@ const register = Joi.object({
   role: Joi.string().required(),
   department: Joi.string().required(),
 
-  password: Joi.string()
-    .pattern(/^[a-zA-Z0-9]{3,30}$/),
+  password: Joi.string().pattern(/^[a-zA-Z0-9]{3,30}$/),
 
   // confirmPassword: Joi.string().valid(Joi.ref('password')).required().strict(),
 
@@ -23,8 +22,7 @@ const register = Joi.object({
   // // .min(1900)
   // // .max(2013),
 
-  email: Joi.string()
-    .email(/* { minDomainSegments: 2, tlds: { allow: ['com', 'net'] } } */),
+  email: Joi.string().email().required(),
 
   address: Joi.string().min(4),
 
@@ -38,8 +36,40 @@ const signin = Joi.object({
   password: Joi.string().min(8).required().strict(),
 });
 
+const edit = Joi.object({
+  firstName: Joi.string().pattern(/[a-zA-Z]/),
+  lastName: Joi.string().pattern(/[a-zA-Z]/),
+  // gender: Joi.allow('male', 'female').required(),
+  username: Joi.string()
+    .alphanum()
+    .min(3)
+    .max(30),
+
+  role: Joi.string(),
+  department: Joi.string(),
+
+  // Plan on using this for password changing
+  // password: Joi.string()
+  //   .pattern(/^[a-zA-Z0-9]{3,30}$/),
+
+  // confirmPassword: Joi.string().valid(Joi.ref('password')).required().strict(),
+
+  email: Joi.string()
+    .email(/* { minDomainSegments: 2, tlds: { allow: ['com', 'net'] } } */),
+
+  address: Joi.string().min(4),
+
+  type: Joi.allow('user', 'admin'),
+
+})
+  .or(
+    'username', 'firstName', 'lastName', 'email', 'address', 'role',
+    'department', 'type',
+  );
+
 // export the schemas
 module.exports = {
   register,
   signin,
+  edit,
 };

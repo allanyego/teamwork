@@ -32,7 +32,7 @@ describe('/auth', () => {
     }
   });
 
-  describe('/signin', () => {
+  describe('POST /signin', () => {
     it('should respond with authenticated user', async (done) => {
       request(server)
         .post('/api/v1/auth/signin')
@@ -51,29 +51,89 @@ describe('/auth', () => {
     });
   });
 
-  describe('/create-user', () => {
-    it('should respond with created user', async (done) => {
+  describe('POST /create-user', () => {
+    describe('admin sends request with new email and username', () => {
+      it('should respond with created user', async (done) => {
+        const user = {
+          username: 'alova',
+          firstName: 'mbabu',
+          lastName: 'obwa',
+          email: 'aloha@mail.com',
+          password: 'alovambabu',
+          department: 'procurement',
+          role: 'auditer',
+          gender: 'female',
+        };
+
+        request(server)
+          .post('/api/v1/auth/create-user')
+          .send(user)
+          .set('Authorization', `Bearer ${this.admin.token}`)
+          .expect(201)
+          .then((resp) => {
+            const { data } = resp.body;
+            expect(data.id).toBeDefined();
+            this.user = data;
+            this.user.password = user.password;
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
+      });
+    });
+
+    describe('admin sends request with used email', () => {
+      it('should respond with created user', async (done) => {
+        const user = {
+          username: 'tom',
+          firstName: 'mbii',
+          lastName: 'tombi',
+          email: 'aloha@mail.com',
+          password: 'tommbii',
+          department: 'procurement',
+          role: 'auditer',
+          gender: 'male',
+        };
+
+        request(server)
+          .post('/api/v1/auth/create-user')
+          .send(user)
+          .set('Authorization', `Bearer ${this.admin.token}`)
+          .expect(200)
+          .then((resp) => {
+            const { body } = resp;
+            expect(body.status).toEqual('error');
+            expect(body.error).toBeDefined();
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
+      });
+    });
+  });
+  describe('PATCH /:id', () => {
+    it('should respond with updated user', async (done) => {
       const user = {
         username: 'alova',
-        firstName: 'mbabu',
-        lastName: 'obwa',
+        firstName: 'khmar',
+        lastName: 'libo',
         email: 'aloha@mail.com',
-        password: 'alovambabu',
         department: 'procurement',
-        role: 'auditer',
-        gender: 'female',
+        role: 'ceo',
       };
 
       request(server)
-        .post('/api/v1/auth/create-user')
+        .patch(`/api/v1/auth/${this.user.id}`)
         .send(user)
         .set('Authorization', `Bearer ${this.admin.token}`)
-        .expect(201)
+        .expect(200)
         .then((resp) => {
           const { data } = resp.body;
-          expect(data.id).toBeDefined();
-          this.user = data;
-          this.user.password = user.password;
+          expect(data.role).toEqual(user.role);
+          expect(data.updatedAt).not.toEqual(this.user.createdAt);
+          this.user = { ...this.user, ...data };
           done();
         })
         .catch((err) => {
