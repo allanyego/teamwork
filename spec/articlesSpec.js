@@ -128,7 +128,7 @@ describe('/articles', () => {
         });
     });
   });
-  xdescribe('GET /:id', () => {
+  describe('GET /:id', () => {
     it('should respond with article with specified id', (done) => {
       request(server)
         .get(`/api/v1/articles/${this.article.id}`)
