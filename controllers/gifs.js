@@ -156,7 +156,12 @@ async function edit(req, res, next) {
     return res.boom.badData(error.message);
   }
 
-
+  if (aGif.user.id !== req.body.userId) {
+    return res.json({
+      status: 'error',
+      error: 'You can only edit your articles.',
+    });
+  }
   let publicId;
   let secureUrl;
 

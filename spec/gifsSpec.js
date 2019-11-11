@@ -182,6 +182,7 @@ describe('/gifs', () => {
         .patch(`/api/v1/gifs/${this.gif.id}`)
         .field('title', newTitle)
         .field('image', 'new gif image')
+        .field('userId', this.user.id)
         .attach('image', `${__dirname}/bikey1.gif`)
         .expect(200)
         .then((resp) => {

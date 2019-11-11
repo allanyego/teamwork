@@ -4,6 +4,7 @@ const edit = Joi.object({
   category: Joi.string().guid({ version: 'uuidv1' }),
   title: Joi.string(),
   image: Joi.any(), // Consider changing this later
+  userId: Joi.string().guid({ version: 'uuidv1' }).required(),
 })
   .or('category', 'title', 'image')
   .without('id', 'userId');
