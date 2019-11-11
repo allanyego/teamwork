@@ -127,40 +127,40 @@ xdescribe('/gifs', () => {
         });
     });
   });
-  // describe('GET /:id', () => {
-  //   it('should respond with gif with specified id', (done) => {
-  //     request(server)
-  //       .get(`/api/v1/gifs/${this.gif.id}`)
-  //       .expect(200)
-  //       .then((resp) => {
-  //         const { data } = resp.body;
-  //         expect(data.title).toEqual(this.gif.title);
-  //         done();
-  //       })
-  //       .catch((err) => {
-  //         done(err);
-  //       });
-  //   });
-  // });
-  // describe('PATCH /:id', () => {
-  //   it('should respond with updated gif', (done) => {
-  //     const newTitle = 'I had to change this gif';
-  //     request(server)
-  //       .patch(`/api/v1/gifs/${this.gif.id}`)
-  //       .field('title', newTitle)
-  //       .field('image', 'new gif image')
-  //       .attach('image', `${__dirname}/bikey1.gif`)
-  //       .expect(200)
-  //       .then((resp) => {
-  //         const { data } = resp.body;
-  //         expect(data.title).toEqual(newTitle);
-  //         done();
-  //       })
-  //       .catch((err) => {
-  //         done(err);
-  //       });
-  //   });
-  // });
+  describe('GET /:id', () => {
+    it('should respond with gif with specified id', (done) => {
+      request(server)
+        .get(`/api/v1/gifs/${this.gif.id}`)
+        .expect(200)
+        .then((resp) => {
+          const { data } = resp.body;
+          expect(data.title).toEqual(this.gif.title);
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
+  describe('PATCH /:id', () => {
+    it('should respond with updated gif', (done) => {
+      const newTitle = 'I had to change this gif';
+      request(server)
+        .patch(`/api/v1/gifs/${this.gif.id}`)
+        .field('title', newTitle)
+        .field('image', 'new gif image')
+        .attach('image', `${__dirname}/bikey1.gif`)
+        .expect(200)
+        .then((resp) => {
+          const { data } = resp.body;
+          expect(data.title).toEqual(newTitle);
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
 //   describe('POST /:id/comment', () => {
 //     it('should respond with created comment', (done) => {
 //       const comment = {

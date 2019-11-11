@@ -66,7 +66,7 @@ const find = async () => new Promise((resolve, reject) => {
 
 const findById = (id) => new Promise((resolve, reject) => {
   const findQuery = 'SELECT a.id, a.title, a.text, a.created_at, a.updated_at, '
-    + 'u.id AS uid, u.username, c.id AS catid, c.name AS catname FROM '
+    + 'u.id AS u_id, u.username, c.id AS cat_id, c.name AS cat_name FROM '
     + 'articles a JOIN users u ON (u.id=a.user_id) JOIN categories c ON '
     + '(c.id=a.category) WHERE (a.id=$1) LIMIT 1';
   query(
@@ -80,13 +80,17 @@ const findById = (id) => new Promise((resolve, reject) => {
         resolve(null);
       }
       const {
-        uid, username, catid, catname, ...rest
+        u_id: userId, username, cat_id: categoryId, cat_name: categoryName,
+        create_at: createdAt, updated_at: updatedAt,
+        ...rest
       } = rows[0];
 
       return resolve({
         ...rest,
-        category: { name: catname, id: catid },
-        user: { id: uid, username },
+        createdAt,
+        updatedAt,
+        category: { name: categoryName, id: categoryId },
+        user: { id: userId, username },
       });
     },
   );

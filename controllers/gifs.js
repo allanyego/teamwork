@@ -109,11 +109,10 @@ async function find(req, res, next) {
  * GET gif post by id
  */
 async function findById(req, res) {
-  const fetchGifQuery = 'SELECT g.id, g.title, g.image, u.id as userid,'
-    + ' u.username, c.id as categoryid, c.name as categoryname FROM gifs g'
-    + ' JOIN users u ON'
-    + ' (u.id=g.user_id) JOIN categories c ON (c.id=g.category) WHERE (g.id=$1)'
-    + ' LIMIT 1';
+  const fetchGifQuery = 'SELECT g.id, g.title, g.image, g.created_at, '
+    + 'g.updated_at, u.id as u_id, u.username, c.id as cat_id, c.name as '
+    + 'cat_name FROM gifs g JOIN users u ON (u.id=g.user_id) JOIN '
+    + 'categories c ON (c.id=g.category) WHERE (g.id=$1) LIMIT 1';
   const theGif = await query(fetchGifQuery, [req.params.id]);
 
   if (!theGif.rows.length) {
@@ -121,18 +120,22 @@ async function findById(req, res) {
   }
 
   const {
-    userid, username, categoryid, categoryname, ...rest
+    u_id: userId, username, cat_id: categoryId, cat_name: categoryName,
+    created_at: createdAt, updated_at: updatedAt,
+    ...rest
   } = theGif.rows[0];
 
   return res.status(200).json({
     status: 'success',
     data: {
       ...rest,
+      createdAt,
+      updatedAt,
       user: {
-        id: userid, username,
+        id: userId, username,
       },
       category: {
-        id: categoryid, name: categoryname,
+        id: categoryId, name: categoryName,
       },
     },
   });
