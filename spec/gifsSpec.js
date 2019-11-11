@@ -5,10 +5,13 @@ const cloudinary = require('cloudinary').v2;
 const { query } = require('../db');
 const { server } = require('../server');
 
-describe('/gifs', () => {
+xdescribe('/gifs', () => {
   beforeAll(async () => {
     this.gif = {
       title: 'Me and the hommies',
+    };
+    this.gif2 = {
+      title: 'All the fun of debugging.',
     };
 
     // A test user to post a gif
@@ -60,13 +63,15 @@ describe('/gifs', () => {
     );
 
     await query('DELETE FROM gifs WHERE (id=$1)', [this.gif.id]);
+    await query('DELETE FROM gifs WHERE (id=$1)', [this.gif2.id]);
     await cloudinary.uploader.destroy(this.gif.id);
+    await cloudinary.uploader.destroy(this.gif2.id);
 
     await query('DELETE FROM categories WHERE (id=$1)', [this.category.id]);
   });
 
   describe('POST /', () => {
-    it('should respond with created gif', (done) => {
+    it('should respond with 1st created gif', (done) => {
       request(server)
         .post('/api/v1/gifs')
         .field('category', this.category.id)
@@ -78,7 +83,26 @@ describe('/gifs', () => {
         .then((resp) => {
           const { data } = resp.body;
           expect(data.id).toBeDefined();
-          this.gif = resp.body.data;
+          this.gif = data;
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+    it('should respond with 2nd created gif', (done) => {
+      request(server)
+        .post('/api/v1/gifs')
+        .field('category', this.category.id)
+        .field('title', this.gif2.title)
+        .field('userId', this.user.id)
+        .field('image', 'image gif')
+        .attach('image', `${__dirname}/coder.gif`)
+        .expect(201)
+        .then((resp) => {
+          const { data } = resp.body;
+          expect(data.id).toBeDefined();
+          this.gif2 = data;
           done();
         })
         .catch((err) => {
@@ -86,55 +110,57 @@ describe('/gifs', () => {
         });
     });
   });
-//   describe('GET /', () => {
-//     it('should respond with an array of gifs', (done) => {
-//       request(server)
-//         .get('/api/v1/gifs')
-//         .expect(200)
-//         .then((resp) => {
-//           const { data } = resp.body;
-//           expect(data.length).toBeGreaterThan(0);
-//           done();
-//         })
-//         .catch((err) => {
-//           done(err);
-//         });
-//     });
-//   });
-//   describe('GET /:id', () => {
-//     it('should respond with gif with specified id', (done) => {
-//       request(server)
-//         .get(`/api/v1/gifs/${this.gif.id}`)
-//         .expect(200)
-//         .then((resp) => {
-//           const { data } = resp.body;
-//           expect(data.title).toEqual(this.gif.title);
-//           done();
-//         })
-//         .catch((err) => {
-//           done(err);
-//         });
-//     });
-//   });
-//   describe('PATCH /:id', () => {
-//     it('should respond with updated gif', (done) => {
-//       const newTitle = 'I had to change this gif';
-//       request(server)
-//         .patch(`/api/v1/gifs/${this.gif.id}`)
-//         .field('title', newTitle)
-//         .field('image', 'new gif image')
-//         .attach('image', `${__dirname}/bikey1.gif`)
-//         .expect(200)
-//         .then((resp) => {
-//           const { data } = resp.body;
-//           expect(data.title).toEqual(newTitle);
-//           done();
-//         })
-//         .catch((err) => {
-//           done(err);
-//         });
-//     });
-//   });
+  describe('GET /feed?category=gif', () => {
+    it('should respond with an ordered array of gifs', (done) => {
+      request(server)
+        .get('/api/v1/feed')
+        .expect(200)
+        .then((resp) => {
+          const { data } = resp.body;
+          console.log('Found gifs', data);
+          expect(data[0].createdAt).toBeGreaterThan(data[1].createdAt);
+          expect(data.length).toBeGreaterThan(0);
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
+  // describe('GET /:id', () => {
+  //   it('should respond with gif with specified id', (done) => {
+  //     request(server)
+  //       .get(`/api/v1/gifs/${this.gif.id}`)
+  //       .expect(200)
+  //       .then((resp) => {
+  //         const { data } = resp.body;
+  //         expect(data.title).toEqual(this.gif.title);
+  //         done();
+  //       })
+  //       .catch((err) => {
+  //         done(err);
+  //       });
+  //   });
+  // });
+  // describe('PATCH /:id', () => {
+  //   it('should respond with updated gif', (done) => {
+  //     const newTitle = 'I had to change this gif';
+  //     request(server)
+  //       .patch(`/api/v1/gifs/${this.gif.id}`)
+  //       .field('title', newTitle)
+  //       .field('image', 'new gif image')
+  //       .attach('image', `${__dirname}/bikey1.gif`)
+  //       .expect(200)
+  //       .then((resp) => {
+  //         const { data } = resp.body;
+  //         expect(data.title).toEqual(newTitle);
+  //         done();
+  //       })
+  //       .catch((err) => {
+  //         done(err);
+  //       });
+  //   });
+  // });
 //   describe('POST /:id/comment', () => {
 //     it('should respond with created comment', (done) => {
 //       const comment = {

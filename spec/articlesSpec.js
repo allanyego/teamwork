@@ -17,6 +17,16 @@ describe('/articles', () => {
         Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
         officia deserunt mollit anim id est laborum.`,
     };
+    this.article2 = {
+      title: 'Huncho plause',
+      text: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+        ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+        aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
+        in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+        officia deserunt mollit anim id est laborum.`,
+    };
 
     // A test user to post a article
     const userId = uuid();
@@ -47,8 +57,12 @@ describe('/articles', () => {
     this.user = user;
     this.category = category;
     this.userToken = sign(this.user);
+
     this.article.userId = this.user.id;
     this.article.category = category.id;
+
+    this.article2.userId = this.user.id;
+    this.article2.category = category.id;
   });
 
   afterAll(async () => {
@@ -57,10 +71,13 @@ describe('/articles', () => {
     if (this.article.id) {
       await query('DELETE FROM articles WHERE id=$1', [this.article.id]);
     }
+    if (this.article2.id) {
+      await query('DELETE FROM articles WHERE id=$1', [this.article2.id]);
+    }
   });
 
   describe('POST /', () => {
-    it('should respond with created article', (done) => {
+    it('should respond with 1st created article', (done) => {
       request(server)
         .post('/api/v1/articles')
         .set('Authorization', `Bearer ${this.userToken}`)
@@ -77,14 +94,32 @@ describe('/articles', () => {
           done(err);
         });
     });
-  });
-  xdescribe('GET /', () => {
-    it('should respond with an array of gifs', (done) => {
+    it('should respond with 2nd created article', (done) => {
       request(server)
-        .get('/api/v1/gifs')
+        .post('/api/v1/articles')
+        .set('Authorization', `Bearer ${this.userToken}`)
+        .send(this.article2)
+        .expect(201)
+        .then((resp) => {
+          const { data } = resp.body;
+          expect(data.id).toBeDefined();
+          expect(data.title).toEqual(this.article2.title);
+          this.article2 = resp.body.data;
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
+  describe('GET /feed', () => {
+    it('should respond with an ordered array of articles', (done) => {
+      request(server)
+        .get('/api/v1/feed')
         .expect(200)
         .then((resp) => {
           const { data } = resp.body;
+          expect(data[0].createdAt).toBeGreaterThan(data[1].createdAt);
           expect(data.length).toBeGreaterThan(0);
           done();
         })
@@ -93,7 +128,7 @@ describe('/articles', () => {
         });
     });
   });
-  describe('GET /:id', () => {
+  xdescribe('GET /:id', () => {
     it('should respond with article with specified id', (done) => {
       request(server)
         .get(`/api/v1/articles/${this.article.id}`)
