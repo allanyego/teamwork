@@ -8,13 +8,13 @@ const { gifRouter } = require('./gifs');
 
 const apiRouter = express.Router();
 
-apiRouter.use('/feed', (req, res) => {
-  const { type } = req.query;
-  if (type === 'gif') {
-    return gifCtrl.find(req, res);
+apiRouter.use('/feed', (req, res, next) => {
+  const { category } = req.query;
+  if (category === 'gif') {
+    return gifCtrl.find(req, res, next);
   }
 
-  return articleCtrl.find(req, res);
+  return articleCtrl.find(req, res, next);
 });
 
 apiRouter.use('/auth', authRouter);

@@ -74,22 +74,26 @@ async function create(req, res, next) {
  * GET all gif posts
  */
 async function find(req, res, next) {
-  const findQuery = 'SELECT g.id, g.title, g.image, c.id as categoryid, c.name '
-    + 'AS categoryname, u.id as userid, u.username FROM gifs g JOIN categories c'
-    + ' ON (g.category=c.id) JOIN users u ON (g.user_id=u.id) ORDER BY '
-    + 'g.created_at DESC';
+  const findQuery = 'SELECT g.id, g.title, g.image, g.created_at, g.updated_at, '
+    + ' c.id as cat_id, c.name AS cat_name, u.id as u_id, u.username FROM '
+    + 'gifs g JOIN categories c ON (g.category=c.id) JOIN users u ON '
+    + '(g.user_id=u.id) ORDER BY g.created_at DESC';
 
   try {
     const foundGifs = await query(findQuery);
     // Map through each row and returning a nested object
     const resGifs = foundGifs.rows.map((row) => {
       const {
-        userid, username, categoryid, categoryname, ...rest
+        u_id: userId, username, cat_id: categoryId, cat_name: categoryName,
+        updated_at: updatedAt, created_at: createdAt,
+        ...rest
       } = row;
       return {
         ...rest,
-        category: { name: categoryname, id: categoryid },
-        user: { username, id: userid },
+        createdAt,
+        updatedAt,
+        category: { name: categoryName, id: categoryId },
+        user: { username, id: userId },
       };
     });
     return res.json({

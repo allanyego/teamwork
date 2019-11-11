@@ -36,24 +36,28 @@ const create = async (article) => new Promise((resolve, reject) => {
 
 const find = async () => new Promise((resolve, reject) => {
   // Room for improvement here with query/path parameters
-  const findQuery = 'SELECT a.id, a.title, a.text, c.id as categoryid, c.name '
-    + 'AS categoryname, u.id as userid, u.username FROM gifs g JOIN categories c'
-    + ' ON (a.category=c.id) JOIN users u ON (a.user_id=u.id) ORDER BY '
-    + 'a.created_at DESC';
+  const findQuery = 'SELECT a.id, a.title, a.text, a.created_at, a.updated_at, '
+    + 'c.id as cat_id, c.name AS cat_name, u.id as u_id, u.username '
+    + 'FROM articles a JOIN categories c ON (a.category=c.id) JOIN users u ON '
+    + '(a.user_id=u.id) ORDER BY a.created_at DESC';
 
-  query(findQuery, (err, articles) => {
+  query(findQuery, (err, { rows }) => {
     if (err) {
       return reject(err);
     }
 
-    const resArticles = articles.map((row) => {
+    const resArticles = rows.map((row) => {
       const {
-        userid, username, categoryid, categoryname, ...rest
+        u_id: userId, username, cat_id: categoryId, cat_name: categoryName,
+        created_at: createdAt, updated_at: updatedAt,
+        ...rest
       } = row;
       return {
         ...rest,
-        category: { name: categoryname, id: categoryid },
-        user: { username, id: userid },
+        createdAt,
+        updatedAt,
+        category: { name: categoryName, id: categoryId },
+        user: { username, id: userId },
       };
     });
     return resolve(resArticles);
