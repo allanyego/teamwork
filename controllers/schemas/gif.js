@@ -1,7 +1,6 @@
 const Joi = require('@hapi/joi');
 
 const edit = Joi.object({
-  id: Joi.string().required(),
   category: Joi.string().guid({ version: 'uuidv1' }),
   title: Joi.string(),
   image: Joi.any(), // Consider changing this later

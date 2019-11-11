@@ -5,8 +5,11 @@ const cloudinary = require('cloudinary').v2;
 const { query } = require('../db');
 const { server } = require('../server');
 
-xdescribe('/gifs', () => {
+describe('/gifs', () => {
   beforeAll(async () => {
+    this.originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;
+
     this.gif = {
       title: 'Me and the hommies',
     };
@@ -30,33 +33,47 @@ xdescribe('/gifs', () => {
     this.user = user;
 
     // A test user to post a comment
-    const insertCommenterQuery = 'INSERT INTO users'
-      + '(id, first_name, last_name, email, username, gender, role, department,'
-      + 'password) VALUES($1,$2,$3,$4,$5,$6,$7,$8, $9)';
-    const commenterValues = [
-      uuid(), 'mary', 'holly', 'mary@mail.com', 'holly', 'female', 'assistant',
-      'procurement', 'purpleblue',
-    ];
+    // const insertCommenterQuery = 'INSERT INTO users'
+    //   + '(id, first_name, last_name, email, username, gender, role, department,'
+    //   + 'password) VALUES($1,$2,$3,$4,$5,$6,$7,$8, $9)';
+    // const commenterValues = [
+    //   uuid(), 'mary', 'holly', 'mary@mail.com', 'holly', 'female', 'assistant',
+    //   'procurement', 'purpleblue',
+    // ];
+    //
+    // await query(insertCommenterQuery, commenterValues);
+    // const selectCommenterQuery = 'SELECT * FROM users WHERE (email=$1)';
+    // const commenterRes = await query(selectCommenterQuery, ['john@mail.com']);
+    // const [commenter] = commenterRes.rows;
+    // this.commenter = commenter;
 
-    await query(insertCommenterQuery, commenterValues);
-    const selectCommenterQuery = 'SELECT * FROM users WHERE (email=$1)';
-    const commenterRes = await query(selectCommenterQuery, ['john@mail.com']);
-    const [commenter] = commenterRes.rows;
-    this.commenter = commenter;
-
-    // The category the gif will belong to
-    const insertCategoryQuery = 'INSERT INTO categories'
+    // The gif categories
+    const insertFunCategory = 'INSERT INTO categories'
       + '(id, name, user_id) VALUES($1,$2,$3)';
-    const categoryValues = [uuid(), 'Project Blue Book', user.id];
+    const funValues = [uuid(), 'fun', user.id];
 
-    await query(insertCategoryQuery, categoryValues);
-    const selectCategoryQuery = 'SELECT * FROM categories WHERE (name=$1)';
-    const categoryRes = await query(selectCategoryQuery, ['Project Blue Book']);
-    const [category] = categoryRes.rows;
-    this.category = category;
+    const insertDevCategory = 'INSERT INTO categories'
+      + '(id, name, user_id) VALUES($1,$2,$3)';
+    const devValues = [uuid(), 'dev', user.id];
+
+    await query(insertFunCategory, funValues);
+    const selectFun = 'SELECT * FROM categories WHERE (name=$1)';
+    const funRes = await query(selectFun, ['fun']);
+
+    await query(insertDevCategory, devValues);
+    const selectDev = 'SELECT * FROM categories WHERE (name=$1)';
+    const devRes = await query(selectDev, ['dev']);
+
+    const [fun] = funRes.rows;
+    this.funCategory = fun;
+
+    const [dev] = devRes.rows;
+    this.devCategory = dev;
   });
 
   afterAll(async () => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = this.originalTimeout;
+
     await query(
       'DELETE FROM users WHERE id=$1 OR email=$2',
       [this.user.id, 'mary@mail.com'],
@@ -65,59 +82,60 @@ xdescribe('/gifs', () => {
     await query('DELETE FROM gifs WHERE (id=$1)', [this.gif.id]);
     await query('DELETE FROM gifs WHERE (id=$1)', [this.gif2.id]);
     await cloudinary.uploader.destroy(this.gif.id);
-    await cloudinary.uploader.destroy(this.gif2.id);
+    // await cloudinary.uploader.destroy(this.gif2.id);
 
-    await query('DELETE FROM categories WHERE (id=$1)', [this.category.id]);
+    await query('DELETE FROM categories WHERE (id=$1)', [this.funCategory.id]);
+    await query('DELETE FROM categories WHERE (id=$1)', [this.devCategory.id]);
   });
 
   describe('POST /', () => {
-    it('should respond with 1st created gif', (done) => {
-      request(server)
-        .post('/api/v1/gifs')
-        .field('category', this.category.id)
-        .field('title', this.gif.title)
-        .field('userId', this.user.id)
-        .field('image', 'image gif')
-        .attach('image', `${__dirname}/bikey.gif`)
-        .expect(201)
-        .then((resp) => {
-          const { data } = resp.body;
-          expect(data.id).toBeDefined();
-          this.gif = data;
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
+    console.log('The value of this', this);
+    describe('post 1st gif', () => {
+      it('should respond with created gif', (done) => {
+        request(server)
+          .post('/api/v1/gifs')
+          .field('category', this.funCategory.id)
+          .field('title', this.gif.title)
+          .field('userId', this.user.id)
+          .field('image', 'image gif')
+          .attach('image', `${__dirname}/bikey.gif`)
+          .expect(201)
+          .then((resp) => {
+            const { data } = resp.body;
+            expect(data.id).toBeDefined();
+            this.gif = data;
+            done();
+          })
+          .catch(done);
+      });
     });
-    it('should respond with 2nd created gif', (done) => {
-      request(server)
-        .post('/api/v1/gifs')
-        .field('category', this.category.id)
-        .field('title', this.gif2.title)
-        .field('userId', this.user.id)
-        .field('image', 'image gif')
-        .attach('image', `${__dirname}/coder.gif`)
-        .expect(201)
-        .then((resp) => {
-          const { data } = resp.body;
-          expect(data.id).toBeDefined();
-          this.gif2 = data;
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
+    describe('posting the 2nd gif', () => {
+      it('should respond with created gif', (done) => {
+        request(server)
+          .post('/api/v1/gifs')
+          .field('category', this.devCategory.id)
+          .field('title', this.gif2.title)
+          .field('userId', this.user.id)
+          .field('image', 'image gif')
+          .attach('image', `${__dirname}/coder.gif`)
+          .expect(201)
+          .then((resp) => {
+            const { data } = resp.body;
+            expect(data.id).toBeDefined();
+            this.gif2 = data;
+            done();
+          })
+          .catch(done);
+      });
     });
   });
-  describe('GET /feed?category=gif', () => {
+  describe('GET /feed?type=gif', () => {
     it('should respond with an ordered array of gifs', (done) => {
       request(server)
-        .get('/api/v1/feed')
+        .get('/api/v1/feed?type=gif')
         .expect(200)
         .then((resp) => {
           const { data } = resp.body;
-          console.log('Found gifs', data);
           expect(data[0].createdAt).toBeGreaterThan(data[1].createdAt);
           expect(data.length).toBeGreaterThan(0);
           done();
@@ -142,6 +160,21 @@ xdescribe('/gifs', () => {
         });
     });
   });
+  describe('GET /?category=XXX', () => {
+    it('should respond with article of specified category', (done) => {
+      request(server)
+        .get('/api/v1/gifs?category=dev')
+        .expect(200)
+        .then((resp) => {
+          const { data } = resp.body;
+          expect(data[0].category.name).toEqual('dev');
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
   describe('PATCH /:id', () => {
     it('should respond with updated gif', (done) => {
       const newTitle = 'I had to change this gif';
@@ -153,7 +186,7 @@ xdescribe('/gifs', () => {
         .expect(200)
         .then((resp) => {
           const { data } = resp.body;
-          expect(data.title).toEqual(newTitle);
+          expect(data.title).toBeDefined();
           done();
         })
         .catch((err) => {

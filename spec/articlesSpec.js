@@ -38,36 +38,55 @@ describe('/articles', () => {
       'marketing', 'aggreykey',
     ];
 
-    const insertCategoryQuery = 'INSERT INTO categories'
+    const salesId = uuid();
+    const insertSalesCategory = 'INSERT INTO categories'
       + '(id, name, user_id) VALUES($1,$2,$3)';
-    const categoryValues = [
-      uuid(), 'The undones', userId,
+    const salesValues = [
+      salesId, 'sales', userId,
+    ];
+
+    const procurementId = uuid();
+    const insertProcurementCategory = 'INSERT INTO categories'
+      + '(id, name, user_id) VALUES($1,$2,$3)';
+    const procurementValues = [
+      procurementId, 'procurement', userId,
     ];
 
     await query(insertUserQuery, userValues);
     const selectUserQuery = 'SELECT * FROM users WHERE (email=$1)';
     const usersRes = await query(selectUserQuery, ['jane@mail.com']);
 
-    await query(insertCategoryQuery, categoryValues);
-    const selectCategoryQuery = 'SELECT * FROM categories WHERE (user_id=$1)';
-    const categoryRes = await query(selectCategoryQuery, [userId]);
+    await query(insertSalesCategory, salesValues);
+    const selectSalesCategory = 'SELECT * FROM categories WHERE (id=$1)';
+    const salesRes = await query(selectSalesCategory, [salesId]);
+
+    await query(insertProcurementCategory, procurementValues);
+    const selectProcurementCategory = 'SELECT * FROM categories WHERE (id=$1)';
+    const procurementRes = await query(selectProcurementCategory, [procurementId]);
 
     const [user] = usersRes.rows;
-    const [category] = categoryRes.rows;
+    const [sales] = salesRes.rows;
+    const [procurement] = procurementRes.rows;
+
     this.user = user;
-    this.category = category;
+    this.salesCategory = sales;
+    this.procurementCategory = procurement;
     this.userToken = sign(this.user);
 
     this.article.userId = this.user.id;
-    this.article.category = category.id;
+    this.article.category = sales.id;
 
     this.article2.userId = this.user.id;
-    this.article2.category = category.id;
+    this.article2.category = procurement.id;
   });
 
   afterAll(async () => {
     await query('DELETE FROM users WHERE id=$1', [this.user.id]);
-    await query('DELETE FROM categories WHERE id=$1', [this.category.id]);
+    await query('DELETE FROM categories WHERE id=$1', [this.salesCategory.id]);
+    await query(
+      'DELETE FROM categories WHERE id=$1',
+      [this.procurementCategory.id],
+    );
     if (this.article.id) {
       await query('DELETE FROM articles WHERE id=$1', [this.article.id]);
     }
@@ -77,39 +96,43 @@ describe('/articles', () => {
   });
 
   describe('POST /', () => {
-    it('should respond with 1st created article', (done) => {
-      request(server)
-        .post('/api/v1/articles')
-        .set('Authorization', `Bearer ${this.userToken}`)
-        .send(this.article)
-        .expect(201)
-        .then((resp) => {
-          const { data } = resp.body;
-          expect(data.id).toBeDefined();
-          expect(data.title).toEqual(this.article.title);
-          this.article = resp.body.data;
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
+    describe('posting 1st article', () => {
+      it('should respond with created article', (done) => {
+        request(server)
+          .post('/api/v1/articles')
+          .set('Authorization', `Bearer ${this.userToken}`)
+          .send(this.article)
+          .expect(201)
+          .then((resp) => {
+            const { data } = resp.body;
+            expect(data.id).toBeDefined();
+            expect(data.title).toEqual(this.article.title);
+            this.article = resp.body.data;
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
+      });
     });
-    it('should respond with 2nd created article', (done) => {
-      request(server)
-        .post('/api/v1/articles')
-        .set('Authorization', `Bearer ${this.userToken}`)
-        .send(this.article2)
-        .expect(201)
-        .then((resp) => {
-          const { data } = resp.body;
-          expect(data.id).toBeDefined();
-          expect(data.title).toEqual(this.article2.title);
-          this.article2 = resp.body.data;
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
+    describe('posting 2nd article', () => {
+      it('should respond with 2nd created article', (done) => {
+        request(server)
+          .post('/api/v1/articles')
+          .set('Authorization', `Bearer ${this.userToken}`)
+          .send(this.article2)
+          .expect(201)
+          .then((resp) => {
+            const { data } = resp.body;
+            expect(data.id).toBeDefined();
+            expect(data.title).toEqual(this.article2.title);
+            this.article2 = resp.body.data;
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
+      });
     });
   });
   describe('GET /feed', () => {
@@ -136,6 +159,21 @@ describe('/articles', () => {
         .then((resp) => {
           const { data } = resp.body;
           expect(data.title).toEqual(this.article.title);
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
+  describe('GET /?category=XXX', () => {
+    it('should respond with article of specified category', (done) => {
+      request(server)
+        .get('/api/v1/articles?category=procurement')
+        .expect(200)
+        .then((resp) => {
+          const { data } = resp.body;
+          expect(data[0].category.name).toEqual('procurement');
           done();
         })
         .catch((err) => {

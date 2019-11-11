@@ -5,7 +5,7 @@ const Article = require('./models/article');
  * POST a new gif post
  */
 async function create(req, res, next) {
-  const { error/* , */ } = schema.add.validate(req.body);
+  const { error } = schema.add.validate(req.body);
   if (error) {
     return res.boom.badData(error.message);
   }
@@ -26,13 +26,15 @@ async function create(req, res, next) {
  */
 async function find(req, res, next) {
   try {
-    const articles = await Article.find();
+    const { category } = req.query;
+    const articles = await Article.find({ category });
 
     return res.json({
       status: 'success',
       data: articles,
     });
   } catch (err) {
+    console.log('Error in find', err);
     return next(err);
   }
 }

@@ -9,8 +9,8 @@ const { gifRouter } = require('./gifs');
 const apiRouter = express.Router();
 
 apiRouter.use('/feed', (req, res, next) => {
-  const { category } = req.query;
-  if (category === 'gif') {
+  const { type } = req.query;
+  if (type === 'gif') {
     return gifCtrl.find(req, res, next);
   }
 
