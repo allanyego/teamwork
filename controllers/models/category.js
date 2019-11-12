@@ -28,6 +28,12 @@ const findById = (id) => new Promise((resolve, reject) => {
   });
 });
 
+const find = async () => {
+  const findQuery = 'SELECT id FROM categories';
+  const { rows: [categories] } = await query(findQuery);
+  return categories.map((cat) => findById(cat.id));
+};
+
 const create = async ({ name, userId }) => {
   const categoryId = uuid();
   const createQuery = 'INSERT INTO categories(id, name, user_id) '
@@ -38,14 +44,23 @@ const create = async ({ name, userId }) => {
   return newCategory;
 };
 
-const destory = async (id) => {
-  const destoryQuery = 'DELETE FROM categories WHERE (id=$1)';
-  await query(destoryQuery, id);
-  return true;
+const update = async ({ id, name }) => {
+  const updateQuery = 'UPDATE categories SET name=$1 WHERE (id=$2)';
+  await query(updateQuery, [name, id]);
+
+  return findById(id);
 };
+
+// const destory = async (id) => {
+//   const destoryQuery = 'DELETE FROM categories WHERE (id=$1)';
+//   await query(destoryQuery, id);
+//   return true;
+// };
 
 module.exports = {
   findById,
+  find,
   create,
-  destory,
+  update,
+  // destory,
 };
