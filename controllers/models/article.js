@@ -15,8 +15,8 @@ const create = async (article) => new Promise((resolve, reject) => {
       return reject(err);
     }
     const findUpdatedQuery = 'SELECT a.id, a.title, a.text, c.id as categoryid, c.name '
-      + 'AS categoryname, u.id as userid, u.username FROM articles a JOIN categories c'
-      + ' ON (a.category=c.id) JOIN users u ON (a.user_id=u.id) WHERE (a.id=$1) '
+      + 'AS categoryname, u.id as userid, u.username FROM articles a JOIN categories c '
+      + 'ON (a.category=c.id) JOIN users u ON (a.user_id=u.id) WHERE (a.id=$1) '
       + 'LIMIT 1';
 
     const { rows } = await query(

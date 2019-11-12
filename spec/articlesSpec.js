@@ -5,7 +5,7 @@ const { sign } = require('../controllers/helpers/sign');
 const { query } = require('../db');
 const { server } = require('../server');
 
-describe('/articles', () => {
+xdescribe('/articles', () => {
   beforeAll(async () => {
     this.article = {
       title: 'Me and the hommies',
