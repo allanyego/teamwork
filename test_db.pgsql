@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 11.5 (Debian 11.5-2+b1)
--- Dumped by pg_dump version 11.5 (Debian 11.5-2+b1)
+-- Dumped by pg_dump version 12rc1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -28,8 +28,6 @@ CREATE FUNCTION public.trigger_set_timestamp() RETURNS trigger
 ALTER FUNCTION public.trigger_set_timestamp() OWNER TO postgres;
 
 SET default_tablespace = '';
-
-SET default_with_oids = false;
 
 --
 -- Name: article_comments; Type: TABLE; Schema: public; Owner: postgres
@@ -196,94 +194,6 @@ CREATE TABLE public.users (
 ALTER TABLE public.users OWNER TO postgres;
 
 --
--- Data for Name: article_comments; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.article_comments (comment, article) FROM stdin;
-\.
-
-
---
--- Data for Name: article_flags; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.article_flags (article, flag) FROM stdin;
-\.
-
-
---
--- Data for Name: articles; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.articles (id, category, title, text, user_id, created_at, updated_at) FROM stdin;
-\.
-
-
---
--- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.categories (id, name, user_id, created_at, updated_at) FROM stdin;
-\.
-
-
---
--- Data for Name: comment_flags; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.comment_flags (comment, flag) FROM stdin;
-\.
-
-
---
--- Data for Name: comments; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.comments (id, comment, user_id, created_at, updated_at) FROM stdin;
-\.
-
-
---
--- Data for Name: flags; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.flags (id, user_id, feedback, status, created_at, updated_at) FROM stdin;
-\.
-
-
---
--- Data for Name: gif_comments; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.gif_comments (gif, comment) FROM stdin;
-\.
-
-
---
--- Data for Name: gif_flags; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.gif_flags (gif, flag) FROM stdin;
-\.
-
-
---
--- Data for Name: gifs; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.gifs (id, category, title, image, user_id, created_at, updated_at) FROM stdin;
-\.
-
-
---
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.users (id, email, first_name, last_name, gender, password, username, phone, role, department, address, type, created_at, updated_at) FROM stdin;
-\.
-
-
---
 -- Name: articles articles_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -402,7 +312,7 @@ CREATE TRIGGER set_timestamp BEFORE UPDATE ON public.articles FOR EACH ROW EXECU
 --
 
 ALTER TABLE ONLY public.articles
-    ADD CONSTRAINT article_category FOREIGN KEY (category) REFERENCES public.categories(id) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT article_category FOREIGN KEY (category) REFERENCES public.categories(id) MATCH FULL ON DELETE CASCADE;
 
 
 --
@@ -410,7 +320,7 @@ ALTER TABLE ONLY public.articles
 --
 
 ALTER TABLE ONLY public.article_comments
-    ADD CONSTRAINT article_comments_article FOREIGN KEY (article) REFERENCES public.articles(id) MATCH FULL ON UPDATE RESTRICT ON DELETE RESTRICT;
+    ADD CONSTRAINT article_comments_article FOREIGN KEY (article) REFERENCES public.articles(id) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -490,7 +400,7 @@ ALTER TABLE ONLY public.flags
 --
 
 ALTER TABLE ONLY public.gifs
-    ADD CONSTRAINT gif_category FOREIGN KEY (category) REFERENCES public.categories(id) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT gif_category FOREIGN KEY (category) REFERENCES public.categories(id) MATCH FULL ON DELETE CASCADE;
 
 
 --

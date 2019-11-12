@@ -32,10 +32,19 @@ describe('/articles', () => {
     const userId = uuid();
     const insertUserQuery = 'INSERT INTO users'
       + '(id, first_name, last_name, email, username, gender, role, department,'
-      + ' password) VALUES($1,$2,$3,$4,$5,$6,$7,$8, $9)';
+      + ' password) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)';
     const userValues = [
       userId, 'jane', 'writer', 'jane@mail.com', 'jane', 'female', 'manager',
       'marketing', 'aggreykey',
+    ];
+
+    // A test user to post a comment
+    const insertCommenterQuery = 'INSERT INTO users'
+      + '(id, first_name, last_name, email, username, gender, role, department,'
+      + 'password) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)';
+    const commenterValues = [
+      uuid(), 'mary', 'holly', 'mary@mail.com', 'holly', 'female', 'assistant',
+      'procurement', 'purpleblue',
     ];
 
     const salesId = uuid();
@@ -56,6 +65,12 @@ describe('/articles', () => {
     const selectUserQuery = 'SELECT * FROM users WHERE (email=$1)';
     const usersRes = await query(selectUserQuery, ['jane@mail.com']);
 
+    await query(insertCommenterQuery, commenterValues);
+    const selectCommenterQuery = 'SELECT * FROM users WHERE (email=$1)';
+    const commenterRes = await query(selectCommenterQuery, ['mary@mail.com']);
+    const [commenter] = commenterRes.rows;
+    this.commenter = commenter;
+
     await query(insertSalesCategory, salesValues);
     const selectSalesCategory = 'SELECT * FROM categories WHERE (id=$1)';
     const salesRes = await query(selectSalesCategory, [salesId]);
@@ -72,6 +87,7 @@ describe('/articles', () => {
     this.salesCategory = sales;
     this.procurementCategory = procurement;
     this.userToken = sign(this.user);
+    this.commenterToken = sign(this.commenter);
 
     this.article.userId = this.user.id;
     this.article.category = sales.id;
@@ -82,6 +98,7 @@ describe('/articles', () => {
 
   afterAll(async () => {
     await query('DELETE FROM users WHERE id=$1', [this.user.id]);
+    await query('DELETE FROM users WHERE id=$1', [this.commenter.id]);
     await query('DELETE FROM categories WHERE id=$1', [this.salesCategory.id]);
     await query(
       'DELETE FROM categories WHERE id=$1',
@@ -92,6 +109,9 @@ describe('/articles', () => {
     }
     if (this.article2.id) {
       await query('DELETE FROM articles WHERE id=$1', [this.article2.id]);
+    }
+    if (this.comment.id) {
+      await query('DELETE FROM comments WHERE id=$1', [this.comment.id]);
     }
   });
 
@@ -174,6 +194,7 @@ describe('/articles', () => {
         .then((resp) => {
           const { data } = resp.body;
           expect(data[0].category.name).toEqual('procurement');
+          this.comment = data;
           done();
         })
         .catch((err) => {
@@ -200,21 +221,24 @@ describe('/articles', () => {
         });
     });
   });
-  xdescribe('POST /:id/comment', () => {
+  describe('POST /:id/comment', () => {
     it('should respond with created comment', (done) => {
       const comment = {
         comment: 'Wow, we have our first comment.',
         userId: this.commenter.id,
-        gif: this.gif.id,
+        article: this.article.id,
       };
 
       request(server)
-        .post(`/api/v1/gifs/${this.gif.id}/comment`)
+        .post(`/api/v1/gifs/${this.article.id}/comment`)
         .send(comment)
+        .set('Authorization', `Bearer ${this.commenterToken}`)
         .expect(201)
         .then((resp) => {
           const { data } = resp.body;
+          expect(data.article).toBeDefined();
           expect(data.comment).toEqual(comment.comment);
+          this.comment = data;
           done();
         })
         .catch((err) => {

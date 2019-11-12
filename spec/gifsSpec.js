@@ -34,19 +34,19 @@ describe('/gifs', () => {
     this.user = user;
 
     // A test user to post a comment
-    // const insertCommenterQuery = 'INSERT INTO users'
-    //   + '(id, first_name, last_name, email, username, gender, role, department,'
-    //   + 'password) VALUES($1,$2,$3,$4,$5,$6,$7,$8, $9)';
-    // const commenterValues = [
-    //   uuid(), 'mary', 'holly', 'mary@mail.com', 'holly', 'female', 'assistant',
-    //   'procurement', 'purpleblue',
-    // ];
-    //
-    // await query(insertCommenterQuery, commenterValues);
-    // const selectCommenterQuery = 'SELECT * FROM users WHERE (email=$1)';
-    // const commenterRes = await query(selectCommenterQuery, ['john@mail.com']);
-    // const [commenter] = commenterRes.rows;
-    // this.commenter = commenter;
+    const insertCommenterQuery = 'INSERT INTO users'
+      + '(id, first_name, last_name, email, username, gender, role, department,'
+      + 'password) VALUES($1,$2,$3,$4,$5,$6,$7,$8, $9)';
+    const commenterValues = [
+      uuid(), 'mary', 'holly', 'mary@mail.com', 'holly', 'female', 'assistant',
+      'procurement', 'purpleblue',
+    ];
+
+    await query(insertCommenterQuery, commenterValues);
+    const selectCommenterQuery = 'SELECT * FROM users WHERE (email=$1)';
+    const commenterRes = await query(selectCommenterQuery, ['mary@mail.com']);
+    const [commenter] = commenterRes.rows;
+    this.commenter = commenter;
 
     // The gif categories
     const insertFunCategory = 'INSERT INTO categories'
@@ -71,6 +71,7 @@ describe('/gifs', () => {
     const [dev] = devRes.rows;
     this.devCategory = dev;
     this.userToken = sign(this.user);
+    this.commenterToken = sign(this.commenter);
   });
 
   afterAll(async () => {
@@ -200,29 +201,32 @@ describe('/gifs', () => {
         });
     });
   });
-  //   describe('POST /:id/comment', () => {
-  //     it('should respond with created comment', (done) => {
-  //       const comment = {
-  //         comment: 'Wow, we have our first comment.',
-  //         userId: this.commenter.id,
-  //         gif: this.gif.id,
-  //       };
-  //
-  //       request(server)
-  //         .post(`/api/v1/gifs/${this.gif.id}/comment`)
-  //         .send(comment)
-  //         .expect(201)
-  //         .then((resp) => {
-  //           const { data } = resp.body;
-  //           expect(data.comment).toEqual(comment.comment);
-  //           done();
-  //         })
-  //         .catch((err) => {
-  //           done(err);
-  //         });
-  //     });
-  //   });
-  //
+  describe('POST /:id/comment', () => {
+    it('should respond with created comment', (done) => {
+      const comment = {
+        comment: 'Yo!, we have our first gif comment. :)',
+        userId: this.commenter.id,
+        gif: this.gif.id,
+      };
+
+      request(server)
+        .post(`/api/v1/gifs/${this.gif.id}/comment`)
+        .send(comment)
+        .set('Authorization', `Bearer ${this.commenterToken}`)
+        .expect(201)
+        .then((resp) => {
+          const { data } = resp.body;
+          expect(data.gif).toBeDefined();
+          expect(data.comment).toEqual(comment.comment);
+          this.comment = data;
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
+
   describe('DELETE /:id', () => {
     it('should respond with success message', (done) => {
       request(server)
