@@ -5,7 +5,7 @@ const { sign } = require('../controllers/helpers/sign');
 const { query } = require('../db');
 const { server } = require('../server');
 
-describe('/articles', () => {
+describe('Articles - ', () => {
   beforeAll(async () => {
     this.article = {
       title: 'Me and the hommies',
@@ -113,21 +113,60 @@ describe('/articles', () => {
     if (this.comment.id) {
       await query('DELETE FROM comments WHERE id=$1', [this.comment.id]);
     }
+    if (this.flag.id) {
+      await query('DELETE FROM comments WHERE id=$1', [this.flag.id]);
+    }
   });
 
-  describe('POST /', () => {
-    describe('posting 1st article', () => {
-      it('should respond with created article', (done) => {
+  describe('/articles', () => {
+    describe('POST /', () => {
+      describe('posting 1st article', () => {
+        it('should respond with created article', (done) => {
+          request(server)
+            .post('/api/v1/articles')
+            .set('Authorization', `Bearer ${this.userToken}`)
+            .send(this.article)
+            .expect(201)
+            .then((resp) => {
+              const { data } = resp.body;
+              expect(data.id).toBeDefined();
+              expect(data.title).toEqual(this.article.title);
+              this.article = resp.body.data;
+              done();
+            })
+            .catch((err) => {
+              done(err);
+            });
+        });
+      });
+      describe('posting 2nd article', () => {
+        it('should respond with 2nd created article', (done) => {
+          request(server)
+            .post('/api/v1/articles')
+            .set('Authorization', `Bearer ${this.userToken}`)
+            .send(this.article2)
+            .expect(201)
+            .then((resp) => {
+              const { data } = resp.body;
+              expect(data.id).toBeDefined();
+              expect(data.title).toEqual(this.article2.title);
+              this.article2 = resp.body.data;
+              done();
+            })
+            .catch((err) => {
+              done(err);
+            });
+        });
+      });
+    });
+    describe('GET /:id', () => {
+      it('should respond with article with specified id', (done) => {
         request(server)
-          .post('/api/v1/articles')
-          .set('Authorization', `Bearer ${this.userToken}`)
-          .send(this.article)
-          .expect(201)
+          .get(`/api/v1/articles/${this.article.id}`)
+          .expect(200)
           .then((resp) => {
             const { data } = resp.body;
-            expect(data.id).toBeDefined();
             expect(data.title).toEqual(this.article.title);
-            this.article = resp.body.data;
             done();
           })
           .catch((err) => {
@@ -135,18 +174,129 @@ describe('/articles', () => {
           });
       });
     });
-    describe('posting 2nd article', () => {
-      it('should respond with 2nd created article', (done) => {
+    describe('GET /?category=XXX', () => {
+      it('should respond with article of specified category', (done) => {
         request(server)
-          .post('/api/v1/articles')
+          .get('/api/v1/articles?category=procurement')
+          .expect(200)
+          .then((resp) => {
+            const { data } = resp.body;
+            expect(data[0].category.name).toEqual('procurement');
+            this.comment = data;
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
+      });
+    });
+    describe('PATCH /:id', () => {
+      it('should respond with updated article', (done) => {
+        const newTitle = 'I had to change this article';
+        request(server)
+          .patch(`/api/v1/articles/${this.article.id}`)
           .set('Authorization', `Bearer ${this.userToken}`)
-          .send(this.article2)
+          .send({ title: newTitle })
+          .expect(200)
+          .then((resp) => {
+            const { data } = resp.body;
+            expect(data.title).toEqual(newTitle);
+            this.article = data;
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
+      });
+    });
+    describe('POST /:id/comment', () => {
+      it('should respond with created comment', (done) => {
+        const comment = {
+          comment: 'Wow, we have our first comment.',
+          userId: this.commenter.id,
+          article: this.article.id,
+        };
+
+        request(server)
+          .post(`/api/v1/articles/${this.article.id}/comment`)
+          .send(comment)
+          .set('Authorization', `Bearer ${this.commenterToken}`)
           .expect(201)
           .then((resp) => {
             const { data } = resp.body;
-            expect(data.id).toBeDefined();
-            expect(data.title).toEqual(this.article2.title);
-            this.article2 = resp.body.data;
+            expect(data.article).toBeDefined();
+            expect(data.comment).toEqual(comment.comment);
+            this.comment = data;
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
+      });
+    });
+
+    describe('POST /:id/flag', () => {
+      describe('user sends a new flag', () => {
+        it('should respond with posted flag', (done) => {
+          const flag = {
+            feedback: 'I find this offensive.',
+            userId: this.commenter.id,
+            article: this.article.id,
+          };
+
+          request(server)
+            .post(`/api/v1/articles/${this.article.id}/flag`)
+            .send(flag)
+            .set('Authorization', `Bearer ${this.commenterToken}`)
+            .expect(201)
+            .then((resp) => {
+              const { data } = resp.body;
+              expect(data.status).toEqual('pending');
+              expect(data.feedback).toEqual(flag.feedback);
+              this.flag = data;
+              done();
+            })
+            .catch((err) => {
+              done(err);
+            });
+        });
+      });
+      describe('user sends similar flag details as before', () => {
+        it('should respond with an error message', (done) => {
+          const flag = {
+            feedback: 'I find this offensive.',
+            userId: this.commenter.id,
+            article: this.article.id,
+          };
+
+          request(server)
+            .post(`/api/v1/articles/${this.article.id}/flag`)
+            .send(flag)
+            .set('Authorization', `Bearer ${this.commenterToken}`)
+            .expect(200)
+            .then((resp) => {
+              const { status } = resp.body;
+              expect(status).toEqual('error');
+              done();
+            })
+            .catch((err) => {
+              done(err);
+            });
+        });
+      });
+    });
+  });
+
+  describe('/feed', () => {
+    describe('GET /', () => {
+      it('should respond with an ordered array of articles', (done) => {
+        request(server)
+          .get('/api/v1/feed')
+          .expect(200)
+          .then((resp) => {
+            const { data } = resp.body;
+            expect(data[0].createdAt).toBeGreaterThan(data[1].createdAt);
+            expect(data.length).toBeGreaterThan(0);
             done();
           })
           .catch((err) => {
@@ -155,108 +305,19 @@ describe('/articles', () => {
       });
     });
   });
-  describe('GET /feed', () => {
-    it('should respond with an ordered array of articles', (done) => {
-      request(server)
-        .get('/api/v1/feed')
-        .expect(200)
-        .then((resp) => {
-          const { data } = resp.body;
-          expect(data[0].createdAt).toBeGreaterThan(data[1].createdAt);
-          expect(data.length).toBeGreaterThan(0);
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
-    });
-  });
-  describe('GET /:id', () => {
-    it('should respond with article with specified id', (done) => {
-      request(server)
-        .get(`/api/v1/articles/${this.article.id}`)
-        .expect(200)
-        .then((resp) => {
-          const { data } = resp.body;
-          expect(data.title).toEqual(this.article.title);
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
-    });
-  });
-  describe('GET /?category=XXX', () => {
-    it('should respond with article of specified category', (done) => {
-      request(server)
-        .get('/api/v1/articles?category=procurement')
-        .expect(200)
-        .then((resp) => {
-          const { data } = resp.body;
-          expect(data[0].category.name).toEqual('procurement');
-          this.comment = data;
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
-    });
-  });
-  describe('PATCH /:id', () => {
-    it('should respond with updated article', (done) => {
-      const newTitle = 'I had to change this article';
-      request(server)
-        .patch(`/api/v1/articles/${this.article.id}`)
-        .set('Authorization', `Bearer ${this.userToken}`)
-        .send({ title: newTitle })
-        .expect(200)
-        .then((resp) => {
-          const { data } = resp.body;
-          expect(data.title).toEqual(newTitle);
-          this.article = data;
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
-    });
-  });
-  describe('POST /:id/comment', () => {
-    it('should respond with created comment', (done) => {
-      const comment = {
-        comment: 'Wow, we have our first comment.',
-        userId: this.commenter.id,
-        article: this.article.id,
-      };
 
-      request(server)
-        .post(`/api/v1/gifs/${this.article.id}/comment`)
-        .send(comment)
-        .set('Authorization', `Bearer ${this.commenterToken}`)
-        .expect(201)
-        .then((resp) => {
-          const { data } = resp.body;
-          expect(data.article).toBeDefined();
-          expect(data.comment).toEqual(comment.comment);
-          this.comment = data;
-          done();
-        })
-        .catch((err) => {
-          done(err);
-        });
-    });
-  });
-
-  describe('DELETE /:id', () => {
-    it('should respond with success message', (done) => {
-      request(server)
-        .delete(`/api/v1/articles/${this.article.id}`)
-        .set('Authorization', `Bearer ${this.userToken}`)
-        .expect(204)
-        .then(done)
-        .catch((err) => {
-          done(err);
-        });
+  describe('/articles', () => {
+    describe('DELETE /:id', () => {
+      it('should respond with success message', (done) => {
+        request(server)
+          .delete(`/api/v1/articles/${this.article.id}`)
+          .set('Authorization', `Bearer ${this.userToken}`)
+          .expect(204)
+          .then(done)
+          .catch((err) => {
+            done(err);
+          });
+      });
     });
   });
 });
