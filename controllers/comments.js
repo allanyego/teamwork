@@ -106,6 +106,13 @@ async function destroy(req, res, next) {
     return res.boom.notFound('No comment found by that identifier');
   }
 
+  if (!res.locals.userId) {
+    return res.boom.unauthorized();
+  }
+  if (res.locals.userId !== theComment.user.id && !res.locals.isAdmin) {
+    return res.boom.unauthorized('Not owner and not admin');
+  }
+
   try {
     await Comment.destory(req.body.id);
     return res.status(204).json({

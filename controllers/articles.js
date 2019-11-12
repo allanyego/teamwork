@@ -2,7 +2,7 @@ const schema = require('./schemas/article');
 const Article = require('./models/article');
 
 /**
- * POST a new gif post
+ * POST a new article post
  */
 async function create(req, res, next) {
   const { error } = schema.add.validate(req.body);
@@ -22,7 +22,7 @@ async function create(req, res, next) {
 }
 
 /**
- * GET all gif posts
+ * GET all article posts
  */
 async function find(req, res, next) {
   try {
@@ -40,7 +40,7 @@ async function find(req, res, next) {
 }
 
 /**
- * GET gif post by id
+ * GET article post by id
  */
 async function findById(req, res, next) {
   try {
@@ -59,7 +59,7 @@ async function findById(req, res, next) {
 }
 
 /**
- * EDIT gif post
+ * EDIT article post
  */
 async function edit(req, res, next) {
   const anArticle = await Article.findById(req.params.id);
@@ -92,7 +92,7 @@ async function edit(req, res, next) {
 }
 
 /**
- * DELETE gif post
+ * DELETE article post
  */
 async function destroy(req, res) {
   const theGif = await Article.findById(req.params.id);
@@ -103,11 +103,8 @@ async function destroy(req, res) {
   if (!res.locals.userId) {
     return res.boom.unauthorized();
   }
-  if (res.locals.userId !== theGif.user.id) {
-    return res.json({
-      status: 'error',
-      error: 'You can only delete your gifs.',
-    });
+  if (res.locals.userId !== theGif.user.id && !res.locals.isAdmin) {
+    return res.boom.unauthorized('Not owner and not admin.');
   }
 
   await Article.destroy(req.params.id);

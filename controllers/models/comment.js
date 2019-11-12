@@ -141,9 +141,9 @@ async function find({ userId, gif, article }) {
     values.push(post.id);
   }
 
-  const foundGifs = await query(commentsQuery);
+  const foundComments = await query(commentsQuery);
   // Map through each row and returning a nested object
-  return foundGifs.rows.map(async (row) => {
+  return foundComments.rows.map(async (row) => {
     const comment = await findById(row.id);
     return comment;
   });
@@ -160,7 +160,7 @@ async function edit({ id, comment }) {
 }
 
 /**
- * DELETE gif post
+ * DELETE comment
  */
 async function destroy(id) {
   const client = await pool.connect();

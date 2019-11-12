@@ -151,11 +151,8 @@ async function destroy(req, res, next) {
     return res.boom.unauthorized();
   }
 
-  if (res.locals.userId !== theGif.user.id) {
-    return res.json({
-      status: 'error',
-      error: 'You can only destory your own gifs.',
-    });
+  if (res.locals.userId !== theGif.user.id && !res.locals.isAdmin) {
+    return res.boom.unauthorized('Not owner and not admin.');
   }
 
   try {
