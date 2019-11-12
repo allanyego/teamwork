@@ -1,6 +1,6 @@
 const uuid = require('uuid/v1');
 
-const { query, pool } = require('../db');
+const { query, pool } = require('../../db');
 const Gif = require('./gif');
 const Article = require('./article');
 
@@ -29,21 +29,35 @@ const getArticleOrGif = async (id) => {
  */
 async function findById(id) {
   const commentQuery = 'SELECT com.id, com.comment, com.created_at, '
-    + 'com.updated_at, u.id as u_id, u.username, FROM comments comm JOIN '
-    + 'users u ON (u.id=comm.user_id) WHERE (comm.id=$1)'
+    + 'com.updated_at, u.id as u_id, u.username FROM comments com JOIN '
+    + 'users u ON (u.id=com.user_id) WHERE (com.id=$1)'
     + ' LIMIT 1';
   const { rows: [theGif] } = await query(commentQuery, [id]);
 
-  if (!theGif.rows.length) {
+  if (!theGif) {
     return null;
   }
 
+  let rGif;
+  let rArticle;
   const { article, gif } = await getArticleOrGif(id);
+  if (article) {
+    rArticle = {
+      id: article.id,
+      title: article.title,
+    };
+  } else {
+    rGif = {
+      id: gif.id,
+      title: gif.title,
+      image: gif.image,
+    };
+  }
 
   const {
     u_id: userId, username, created_at: createdAt, updated_at: updatedAt,
     ...rest
-  } = theGif.rows[0];
+  } = theGif;
 
   return {
     ...rest,
@@ -52,8 +66,8 @@ async function findById(id) {
     user: {
       id: userId, username,
     },
-    article,
-    gif,
+    article: rArticle,
+    gif: rGif,
   };
 }
 
@@ -70,8 +84,7 @@ async function create({
   try {
     await client.query('BEGIN');
 
-    const insertCommentQuery = 'INSERT INTO comments'
-      + '(id, comment, user_id)'
+    const insertCommentQuery = 'INSERT INTO comments(id, comment, user_id)'
       + ' VALUES($1,$2,$3)';
     const values = [commentId, comment, userId];
     await client.query(insertCommentQuery, values);
@@ -79,16 +92,14 @@ async function create({
     // Query string to insert into respective gif|article_comments table
     let insertIntermediaryQuery;
     if (article) {
-      insertIntermediaryQuery = 'INSERT INTO article_comments'
-        + '(article, comment)'
+      insertIntermediaryQuery = 'INSERT INTO article_comments(article, comment)'
         + ' VALUES($1,$2)';
     } else {
-      insertIntermediaryQuery = 'INSERT INTO gif_comments'
-        + '(gif, comment)'
+      insertIntermediaryQuery = 'INSERT INTO gif_comments(gif, comment)'
         + ' VALUES($1,$2)';
     }
 
-    const commentValues = [gif || article, commentId];
+    const commentValues = [article || gif, commentId];
     await client.query(insertIntermediaryQuery, commentValues);
 
     await client.query('COMMIT');

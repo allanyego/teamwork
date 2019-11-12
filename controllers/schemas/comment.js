@@ -7,7 +7,7 @@ const commentEdit = Joi.object({
 
 const gifAdd = Joi.object({
   comment: Joi.string().required(),
-  gif: Joi.string().guid({ version: 'uuidv1' }).required(),
+  gif: Joi.string().required(),
   userId: Joi.string().guid({ version: 'uuidv1' }).required(),
 })
   .without('id', ['gif', 'userId']);
