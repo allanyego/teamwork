@@ -208,9 +208,20 @@ async function edit(req, res, next) {
  * DELETE gif post
  */
 async function destroy(req, res) {
-  const theGif = await query('SELECT * FROM gifs WHERE (id=$1)', [req.params.id]);
-  if (!theGif.rows.length) {
+  const theGif = await fbyId(req.params.id);
+  if (!theGif) {
     return res.boom.notFound('No gif by that identifier');
+  }
+
+  if (!res.locals.userId) {
+    return res.boom.unauthorized();
+  }
+
+  if (res.locals.userId !== theGif.user.id) {
+    return res.json({
+      status: 'error',
+      error: 'You can only destory your own gifs.',
+    });
   }
 
   await cloudinary.uploader.destroy(req.params.id);
@@ -257,7 +268,7 @@ async function destroy(req, res) {
 
     await client.query('COMMIT');
 
-    return res.json({
+    return res.status(204).json({
       status: 'success',
       data: 'The gif was deleted successfully.',
     });

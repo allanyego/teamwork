@@ -10,6 +10,7 @@ const auth = (req, res, next) => {
       res.boom.unauthorized('Invalid user ID');
     } else {
       res.locals.isAdmin = !!admin;
+      res.locals.userId = userId;
       next();
     }
   } catch (e) {
