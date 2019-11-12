@@ -2,6 +2,7 @@ const request = require('supertest');
 const uuid = require('uuid/v1');
 const cloudinary = require('cloudinary').v2;
 
+const { sign } = require('../controllers/helpers/sign');
 const { query } = require('../db');
 const { server } = require('../server');
 
@@ -69,6 +70,7 @@ describe('/gifs', () => {
 
     const [dev] = devRes.rows;
     this.devCategory = dev;
+    this.userToken = sign(this.user);
   });
 
   afterAll(async () => {
@@ -82,14 +84,13 @@ describe('/gifs', () => {
     await query('DELETE FROM gifs WHERE (id=$1)', [this.gif.id]);
     await query('DELETE FROM gifs WHERE (id=$1)', [this.gif2.id]);
     await cloudinary.uploader.destroy(this.gif.id);
-    // await cloudinary.uploader.destroy(this.gif2.id);
+    await cloudinary.uploader.destroy(this.gif2.id);
 
     await query('DELETE FROM categories WHERE (id=$1)', [this.funCategory.id]);
     await query('DELETE FROM categories WHERE (id=$1)', [this.devCategory.id]);
   });
 
   describe('POST /', () => {
-    console.log('The value of this', this);
     describe('post 1st gif', () => {
       it('should respond with created gif', (done) => {
         request(server)
@@ -99,6 +100,7 @@ describe('/gifs', () => {
           .field('userId', this.user.id)
           .field('image', 'image gif')
           .attach('image', `${__dirname}/bikey.gif`)
+          .set('Authorization', `Bearer ${this.userToken}`)
           .expect(201)
           .then((resp) => {
             const { data } = resp.body;
@@ -118,6 +120,7 @@ describe('/gifs', () => {
           .field('userId', this.user.id)
           .field('image', 'image gif')
           .attach('image', `${__dirname}/coder.gif`)
+          .set('Authorization', `Bearer ${this.userToken}`)
           .expect(201)
           .then((resp) => {
             const { data } = resp.body;
@@ -184,10 +187,12 @@ describe('/gifs', () => {
         .field('image', 'new gif image')
         .field('userId', this.user.id)
         .attach('image', `${__dirname}/bikey1.gif`)
+        .set('Authorization', `Bearer ${this.userToken}`)
         .expect(200)
         .then((resp) => {
           const { data } = resp.body;
-          expect(data.title).toBeDefined();
+          expect(data.title).not.toEqual(this.gif.title);
+          this.gif = data;
           done();
         })
         .catch((err) => {
@@ -195,42 +200,39 @@ describe('/gifs', () => {
         });
     });
   });
-//   describe('POST /:id/comment', () => {
-//     it('should respond with created comment', (done) => {
-//       const comment = {
-//         comment: 'Wow, we have our first comment.',
-//         userId: this.commenter.id,
-//         gif: this.gif.id,
-//       };
-//
-//       request(server)
-//         .post(`/api/v1/gifs/${this.gif.id}/comment`)
-//         .send(comment)
-//         .expect(201)
-//         .then((resp) => {
-//           const { data } = resp.body;
-//           expect(data.comment).toEqual(comment.comment);
-//           done();
-//         })
-//         .catch((err) => {
-//           done(err);
-//         });
-//     });
-//   });
-//
-//   describe('DELETE /:id', () => {
-//     it('should respond with success message', (done) => {
-//       request(server)
-//         .delete(`/api/v1/gifs/${this.gif.id}`)
-//         .expect(200)
-//         .then((resp) => {
-//           const { data } = resp.body;
-//           expect(data).toEqual('The gif was deleted successfully.');
-//           done();
-//         })
-//         .catch((err) => {
-//           done(err);
-//         });
-//     });
-//   });
+  //   describe('POST /:id/comment', () => {
+  //     it('should respond with created comment', (done) => {
+  //       const comment = {
+  //         comment: 'Wow, we have our first comment.',
+  //         userId: this.commenter.id,
+  //         gif: this.gif.id,
+  //       };
+  //
+  //       request(server)
+  //         .post(`/api/v1/gifs/${this.gif.id}/comment`)
+  //         .send(comment)
+  //         .expect(201)
+  //         .then((resp) => {
+  //           const { data } = resp.body;
+  //           expect(data.comment).toEqual(comment.comment);
+  //           done();
+  //         })
+  //         .catch((err) => {
+  //           done(err);
+  //         });
+  //     });
+  //   });
+  //
+  describe('DELETE /:id', () => {
+    it('should respond with success message', (done) => {
+      request(server)
+        .delete(`/api/v1/gifs/${this.gif.id}`)
+        .set('Authorization', `Bearer ${this.userToken}`)
+        .expect(204)
+        .then(done())
+        .catch((err) => {
+          done(err);
+        });
+    });
+  });
 });

@@ -90,74 +90,37 @@ async function edit(req, res, next) {
     return next(err);
   }
 }
-//
-// /**
-//  * DELETE gif post
-//  */
-// async function destroy(req, res) {
-//   const theGif = await query('SELECT * FROM gif WHERE id=$1', [req.params.id]);
-//   if (!theGif.rows.length) {
-//     return res.boom.notFound('No gif by that identifier');
-//   }
-//
-//   await cloudinary.uploader.destroy(req.params.id);
-//   // A transaction for cascaded deletion of a gif and its related
-//   // entities
-//   const client = await pool.connect();
-//   try {
-//     await client.query('BEGIN');
-//
-//     // Delete entries from flag-related tables
-//     await client.query(
-//       'DELETE FROM comment_flags WHERE comment IN SELECT comment FROM '
-//       + 'gif_comments WHERE (gif=$1)', [req.params.id],
-//     );
-//     await client.query(
-//       'DELETE FROM flags f WHERE id IN (SELECT cf.flag FROM '
-//       + 'comments c JOIN comment_flags cf ON (c.id=cf.comment) '
-//       + 'JOIN article_comments ac ON (ac.comment=c.id) WHERE '
-//       + '(ac.gif=$1)', [req.params.id],
-//     );
-//
-//     // Delete entries from comment-related tables
-//     await client.query(
-//       'DELETE FROM gif_comments WHERE (comment=$1)', [req.params.id],
-//     );
-//     await client.query(
-//       'DELETE FROM comments WHERE id IN SELECT comment FROM gif_comments '
-//       + 'WHERE (gif=$1)', [req.params.id],
-//     );
-//
-//     // Delete entries in related flag tables
-//     await client.query(
-//       'DELETE FROM gif_flags WHERE gif (gif=$1)', [req.params.id],
-//     );
-//     await client.query(
-//       'DELETE FROM flags f WHERE id IN (SELECT gf.flag FROM '
-//       + 'gifs g JOIN gif_flags gf ON (g.id=gf.gif)  WHERE '
-//       + '(g.id=$1)', [req.params.id],
-//     );
-//     // Delete the gif entry
-//     await client.query(
-//       'DELETE FROM flags f WHERE id IN (SELECT cf.flag FROM '
-//       + 'comments c JOIN comment_flags cf ON (c.id=cf.comment) '
-//       + 'JOIN article_comments ac ON (ac.comment=c.id) WHERE '
-//       + '(ac.article=$1)', [req.params.id],
-//     );
-//
-//     return await client.query('COMMIT');
-//   } catch (e) {
-//     await client.query('ROLLBACK');
-//     throw e;
-//   } finally {
-//     await client.release();
-//   }
-// }
+
+/**
+ * DELETE gif post
+ */
+async function destroy(req, res) {
+  const theGif = await Article.findById(req.params.id);
+  if (!theGif) {
+    return res.boom.notFound('No gif by that identifier');
+  }
+
+  if (!res.locals.userId) {
+    return res.boom.unauthorized();
+  }
+  if (res.locals.userId !== theGif.user.id) {
+    return res.json({
+      status: 'error',
+      error: 'You can only delete your gifs.',
+    });
+  }
+
+  await Article.destroy(req.params.id);
+  return res.status(204).json({
+    status: 'success',
+    data: 'Article was destroyed successfully.',
+  });
+}
 
 module.exports = {
   create,
   find,
   findById,
   edit,
-  // destroy,
+  destroy,
 };

@@ -5,7 +5,7 @@ const {
   edit,
   find,
   findById,
-  // destroy,
+  destroy,
 } = require('../controllers/articles');
 
 // const commentCtrl = require('../controllers/comments');
@@ -18,7 +18,7 @@ articlesRouter.get('/:id', findById);
 // articlesRouter.post('/:id/comment', commentCtrl.create);
 articlesRouter.post('/', auth, create);
 articlesRouter.patch('/:id', auth, edit);
-// articlesRouter.delete('/:id', destroy);
+articlesRouter.delete('/:id', auth, destroy);
 
 module.exports = {
   articlesRouter,

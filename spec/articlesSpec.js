@@ -223,16 +223,13 @@ describe('/articles', () => {
     });
   });
 
-  xdescribe('DELETE /:id', () => {
+  describe('DELETE /:id', () => {
     it('should respond with success message', (done) => {
       request(server)
-        .delete(`/api/v1/gifs/${this.gif.id}`)
-        .expect(200)
-        .then((resp) => {
-          const { data } = resp.body;
-          expect(data).toEqual('The gif was deleted successfully.');
-          done();
-        })
+        .delete(`/api/v1/articles/${this.article.id}`)
+        .set('Authorization', `Bearer ${this.userToken}`)
+        .expect(204)
+        .then(done)
         .catch((err) => {
           done(err);
         });
