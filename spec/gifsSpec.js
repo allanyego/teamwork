@@ -280,7 +280,7 @@ describe('Gifs - ', () => {
     });
   });
 
-  xdescribe('/feed', () => {
+  describe('/feed', () => {
     describe('GET / [?type=gif]', () => {
       it('should respond with an ordered array of articles', (done) => {
         request(server)
@@ -299,7 +299,7 @@ describe('Gifs - ', () => {
     });
   });
 
-  xdescribe('/gifs', () => {
+  describe('/gifs', () => {
     describe('DELETE /:id', () => {
       it('should respond with success message', (done) => {
         request(server)
