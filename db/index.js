@@ -7,8 +7,9 @@ if (NODE_ENV === 'production' && DATABASE_URL) {
   pool = new Pool({
     connectionString: DATABASE_URL,
   });
+} else {
+  pool = new Pool();
 }
-pool = new Pool();
 
 pool.connect((err) => {
   if (err) {
