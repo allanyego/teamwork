@@ -7,9 +7,11 @@ if (NODE_ENV === 'production' && DATABASE_URL) {
   console.log('In production, Yey');
   pool = new Pool({
     connectionString: DATABASE_URL,
+    ssl: true,
   });
+} else {
+  pool = new Pool();
 }
-pool = new Pool();
 
 pool.connect((err) => {
   if (err) {
