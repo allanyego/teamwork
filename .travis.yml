@@ -26,5 +26,5 @@ deploy:
   provider: heroku
   api_key: $HEROKU_KEY
   app:
-    master: my-app-staging
-    production: my-app-production
+    # master: my-app-staging
+    develop: teamwork-ke-dev
