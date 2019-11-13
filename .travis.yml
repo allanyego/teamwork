@@ -30,4 +30,4 @@ deploy:
     # develop
     heroku-deploy: teamwork-ke-dev
   run:
-    - "pg:psql --app teamwork-ke-dev < test_db.pgsql"
+    - pg:backups:restore 'https://res.cloudinary.com/doltfsoo1/raw/upload/v1573650022/test_db_dsx1k6.pgsql' $DATABASE_URL
