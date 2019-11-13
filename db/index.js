@@ -4,6 +4,7 @@ const { Pool } = require('pg');
 let pool;
 const { NODE_ENV, DATABASE_URL } = process.env;
 if (NODE_ENV === 'production' && DATABASE_URL) {
+  console.log('************* Connecting to prod db', DATABASE_URL);
   pool = new Pool({
     connectionString: DATABASE_URL,
   });

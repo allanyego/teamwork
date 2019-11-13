@@ -45,7 +45,7 @@ const find = async ({ category }) => new Promise((resolve, reject) => {
     findQuery += ' WHERE (c.name=$1)';
     values.push(category);
   }
-
+  console.log('Going to execute query');
   findQuery += ' ORDER BY a.created_at DESC';
 
   query(findQuery, values, (err, { rows }) => {
