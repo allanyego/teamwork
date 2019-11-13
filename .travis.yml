@@ -28,3 +28,5 @@ deploy:
   app:
     # master: my-app-staging
     develop: teamwork-ke-dev
+  run:
+    - "pg:psql --app teamwork-ke-dev < test_db.pgsql"
