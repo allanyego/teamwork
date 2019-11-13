@@ -27,6 +27,7 @@ deploy:
   api_key: $HEROKU_KEY
   app:
     # master: my-app-staging
-    develop: teamwork-ke-dev
+    # develop
+    heroku-deploy: teamwork-ke-dev
   run:
     - "pg:psql --app teamwork-ke-dev < test_db.pgsql"
