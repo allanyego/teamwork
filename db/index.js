@@ -1,14 +1,21 @@
 require('dotenv').config();
 const { Pool } = require('pg');
 
-const pool = new Pool();
-
-const { PGDATABASE, PGUSER } = process.env;
-console.log(PGDATABASE, PGUSER);
+let pool;
+const { NODE_ENV, DATABASE_URL } = process.env;
+if (NODE_ENV === 'production' && DATABASE_URL) {
+  console.log('In production, Yey');
+  pool = new Pool({
+    connectionString: DATABASE_URL,
+    ssl: true,
+  });
+} else {
+  pool = new Pool();
+}
 
 pool.connect((err) => {
   if (err) {
-    console.log('DB error', err);
+    console.log('DB error', err.message);
     console.log('Are you sure your DB server is up?');
   }
 });

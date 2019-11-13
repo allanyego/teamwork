@@ -1,71 +1,51 @@
 const cloudinary = require('cloudinary').v2;
 
-const { query, pool } = require('../db');
 const { dataUri } = require('./helpers/data-uri');
 const schema = require('./schemas/gif');
+const Gif = require('./models/gif');
+const Category = require('./models/category');
 
 /**
  * POST a new gif post
  */
 async function create(req, res, next) {
-  const isCategory = async ({ category }) => {
-    const categories = await query(
-      'SELECT * FROM categories WHERE (id=$1)',
-      [category],
-    );
-    return !!categories.rows.length;
-  };
-
   const { error/* , */ } = schema.add.validate(req.body);
   if (error) {
     return res.boom.badData(error.message);
   }
 
-  if (!isCategory(req.body)) {
+  const isCategory = await Category.findById(req.body.category);
+  if (!isCategory) {
     return res.boom.badData('The specified category does not exist.');
   }
+
 
   const file = dataUri(req).content;
   try {
     const image = await cloudinary.uploader.upload(file);
-    const insertNewGifQuery = 'INSERT INTO gifs'
-      + '(id, category, title, image, user_id)'
-      + ' VALUES($1,$2,$3,$4,$5)';
+
     const {
       category, title, userId,
     } = req.body;
-    const values = [image.public_id, category, title, image.secure_url, userId];
-    const fetchNewGifQuery = 'SELECT g.id, g.title, g.image, u.id as userid,'
-      + ' u.username, c.id as categoryid, c.name as categoryname FROM gifs g'
-      + ' JOIN users u ON'
-      + ' (u.id=g.user_id) JOIN categories c ON (c.id=g.category) WHERE (g.id=$1)';
+
+    const newGifDetails = {
+      id: image.public_id,
+      image: image.secure_url,
+      category,
+      title,
+      userId,
+    };
 
     try {
-      await query(insertNewGifQuery, values);
-
-      const theNewGif = await query(fetchNewGifQuery, [image.public_id]);
-      const {
-        userid, username, categoryid, categoryname, ...rest
-      } = theNewGif.rows[0];
-
+      const theNewGif = await Gif.create(newGifDetails);
       return res.status(201).json({
         status: 'success',
-        data: {
-          ...rest,
-          user: {
-            id: userid, username,
-          },
-          category: {
-            id: categoryid, name: categoryname,
-          },
-        },
+        data: theNewGif,
       });
     } catch (err) {
-      console.log('ERROR', err);
       return next(err);
     }
   } catch (e) {
-    console.log('ERROR', e);
     return next(e);
   }
 }
@@ -74,72 +54,39 @@ async function create(req, res, next) {
  * GET all gif posts
  */
 async function find(req, res, next) {
-  const findQuery = 'SELECT g.id, g.title, g.image, c.id as categoryid, c.name '
-    + 'AS categoryname, u.id as userid, u.username FROM gifs g JOIN categories c'
-    + ' ON (g.category=c.id) JOIN users u ON (g.user_id=u.id) ORDER BY '
-    + 'g.created_at DESC';
-
   try {
-    const foundGifs = await query(findQuery);
-    // Map through each row and returning a nested object
-    const resGifs = foundGifs.rows.map((row) => {
-      const {
-        userid, username, categoryid, categoryname, ...rest
-      } = row;
-      return {
-        ...rest,
-        category: { name: categoryname, id: categoryid },
-        user: { username, id: userid },
-      };
-    });
+    const { category } = req.query;
+    const gifs = await Gif.find({ category });
     return res.json({
       status: 'success',
-      data: resGifs,
+      data: gifs,
     });
-  } catch (err) {
-    return next(err);
+  } catch (e) {
+    return next(e);
   }
 }
 
-/**
- * GET gif post by id
- */
-async function findById(req, res) {
-  const fetchGifQuery = 'SELECT g.id, g.title, g.image, u.id as userid,'
-    + ' u.username, c.id as categoryid, c.name as categoryname FROM gifs g'
-    + ' JOIN users u ON'
-    + ' (u.id=g.user_id) JOIN categories c ON (c.id=g.category) WHERE (g.id=$1)'
-    + ' LIMIT 1';
-  const theGif = await query(fetchGifQuery, [req.params.id]);
-
-  if (!theGif.rows.length) {
-    return res.boom.noFound('No gif by that identifier.');
+async function findById(req, res, next) {
+  try {
+    const gif = await Gif.findById(req.params.id);
+    if (!gif) {
+      return res.boom.noFound('No gif by that identifier.');
+    }
+    return res.status(200).json({
+      status: 'success',
+      data: gif,
+    });
+  } catch (e) {
+    return next(e);
   }
-
-  const {
-    userid, username, categoryid, categoryname, ...rest
-  } = theGif.rows[0];
-
-  return res.status(200).json({
-    status: 'success',
-    data: {
-      ...rest,
-      user: {
-        id: userid, username,
-      },
-      category: {
-        id: categoryid, name: categoryname,
-      },
-    },
-  });
 }
 
 /**
  * EDIT gif post
  */
 async function edit(req, res, next) {
-  const theGif = await query('SELECT * FROM gif WHERE id=$1', [req.params.id]);
-  if (!theGif.rows.length) {
+  const aGif = await Gif.findById(req.params.id);
+  if (!aGif) {
     return res.boom.notFound('No gif by that identifier');
   }
 
@@ -148,13 +95,19 @@ async function edit(req, res, next) {
     return res.boom.badData(error.message);
   }
 
-  const gif = theGif.rows[0];
+  if (aGif.user.id !== req.body.userId) {
+    return res.json({
+      status: 'error',
+      error: 'You can only edit your articles.',
+    });
+  }
+
   let publicId;
   let secureUrl;
 
   if (req.file) {
     const file = dataUri(req).content;
-    await cloudinary.uploader.destroy(gif.id);
+    await cloudinary.uploader.destroy(aGif.id);
 
     try {
       const image = await cloudinary.uploader.upload(file);
@@ -166,39 +119,19 @@ async function edit(req, res, next) {
   }
 
   try {
-    const updateQuery = 'UPDATE gifs SET id=$1, category=$4, title=$2, '
-      + 'image=$3 where (id=$4)';
-    const {
-      category, title,
-    } = req.body;
-    const values = [
-      publicId || gif.id,
-      category || gif.category,
-      title || gif.title,
-      secureUrl || gif.image];
+    const { title } = req.body;
+    const newGifDetails = {
+      newId: publicId || aGif.id,
+      title: title || aGif.title,
+      image: secureUrl || aGif.image,
+      oldId: aGif.id,
+    };
 
-    await query(updateQuery, values);
-
-    const fetchUpdatedGifQuery = 'SELECT g.id, g.title, g.image, u.id as userid,'
-      + ' u.username, c.id as categoryid, c.name as categoryname FROM gifs g'
-      + ' JOIN users u ON'
-      + ' (u.id=g.user_id) JOIN categories c ON (c.id=g.category) WHERE (g.id=$1)';
-    const theUpdatedGif = await query(fetchUpdatedGifQuery, [req.params.id]);
-    const {
-      userid, username, categoryid, categoryname, ...rest
-    } = theUpdatedGif.rows[0];
+    const theUpdatedGif = await Gif.update(newGifDetails);
 
     return res.status(200).json({
       status: 'success',
-      data: {
-        ...rest,
-        user: {
-          id: userid, username,
-        },
-        category: {
-          id: categoryid, name: categoryname,
-        },
-      },
+      data: theUpdatedGif,
     });
   } catch (err) {
     return next(err);
@@ -208,65 +141,30 @@ async function edit(req, res, next) {
 /**
  * DELETE gif post
  */
-async function destroy(req, res) {
-  const theGif = await query('SELECT * FROM gifs WHERE (id=$1)', [req.params.id]);
-  if (!theGif.rows.length) {
+async function destroy(req, res, next) {
+  const theGif = await Gif.findById(req.params.id);
+  if (!theGif) {
     return res.boom.notFound('No gif by that identifier');
   }
 
-  await cloudinary.uploader.destroy(req.params.id);
-  // A transaction for cascaded deletion of a gif and its related
-  // entities
-  const client = await pool.connect();
+  if (!res.locals.userId) {
+    return res.boom.unauthorized();
+  }
+
+  if (res.locals.userId !== theGif.user.id && !res.locals.isAdmin) {
+    return res.boom.unauthorized('Not owner and not admin.');
+  }
+
   try {
-    await client.query('BEGIN');
+    await cloudinary.uploader.destroy(req.params.id);
 
-    try {
-      // Delete related flags
-      await client.query(
-        'DELETE FROM flags f WHERE f.id IN (SELECT gf.flag FROM '
-        + 'gif_flags gf WHERE (gf.gif=$1))',
-        [req.params.id],
-      );
-    } catch (e) {
-      console.log('Deleting flags error', e);
-      throw e;
-    }
-
-    try {
-      // Delete related comments
-      await client.query(
-        'DELETE FROM comments c WHERE c.id IN (SELECT comment FROM '
-        + 'gif_comments gc WHERE (gc.gif=$1))',
-        [req.params.id],
-      );
-    } catch (e) {
-      console.log('Deleting comments error', e);
-      throw e;
-    }
-
-    try {
-      // Delete from gifs, cascades to delete comments and flags entries from the
-      // gif_comments and gif_flags tables repectively
-      await client.query(
-        'DELETE FROM gifs WHERE (id=$1)', [`${req.params.id}`],
-      );
-    } catch (e) {
-      console.log('Deleting gifs error', e);
-      throw e;
-    }
-
-    await client.query('COMMIT');
-
-    return res.json({
+    await Gif.destory(req.params.id);
+    return res.status(204).json({
       status: 'success',
       data: 'The gif was deleted successfully.',
     });
   } catch (e) {
-    await client.query('ROLLBACK');
-    throw e;
-  } finally {
-    await client.release();
+    return next(e);
   }
 }
 

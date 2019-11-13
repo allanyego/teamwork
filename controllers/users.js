@@ -55,8 +55,8 @@ async function register(req, res, next) {
     return res.boom.badData(error.message);
   }
 
-  const users = await User.find(req.body);
-  if (users.length) {
+  const [user] = await User.find(req.body);
+  if (user) {
     return res.json({
       status: 'error',
       error: 'We already have a user by that username or email',
@@ -79,9 +79,33 @@ async function register(req, res, next) {
   }
 }
 
-function edit(_req, res) {
-  res.boom.notImplemented();
-}
+const edit = async (req, res, next) => {
+  const { error } = schema.edit.validate(req.body);
+
+  if (error) {
+    return res.boom.badData(error.message);
+  }
+
+  const [user] = await User.find(req.body);
+  if (user && user.id !== req.params.id) {
+    return res.json({
+      status: 'error',
+      error: 'We already have a user by that username or email',
+    });
+  }
+
+  try {
+    const updatedUser = await User.update({
+      ...user, ...req.body,
+    });
+    return res.json({
+      status: 'success',
+      data: stripPassword(updatedUser),
+    });
+  } catch (e) {
+    return next(e);
+  }
+};
 
 module.exports = {
   signin,

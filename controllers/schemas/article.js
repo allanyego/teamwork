@@ -1,13 +1,11 @@
 const Joi = require('@hapi/joi');
 
 const edit = Joi.object({
-  id: Joi.string().guid({ version: 'uuidv1' }).required(),
   category: Joi.string().guid({ version: 'uuidv1' }),
   title: Joi.string(),
   text: Joi.string(),
 })
-  .or('category', 'title', 'text')
-  .without('id', 'userId');
+  .or('category', 'title', 'text');
 
 const add = Joi.object({
   category: Joi.string().guid({ version: 'uuidv1' }).required(),
