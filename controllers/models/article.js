@@ -48,13 +48,15 @@ const find = async ({ category }) => new Promise((resolve, reject) => {
   console.log('Going to execute query');
   findQuery += ' ORDER BY a.created_at DESC';
 
-  query(findQuery, values, (err, { rows }) => {
+  query(findQuery, values, (err, resp) => {
     if (err) {
       console.log('Query error***********', err);
       return reject(err);
     }
 
-    const resArticles = rows.map((row) => {
+    console.log('NO error', resp);
+
+    const resArticles = resp.rows.map((row) => {
       const {
         u_id: userId, username, cat_id: categoryId, cat_name: categoryName,
         created_at: createdAt, updated_at: updatedAt,
