@@ -8,7 +8,6 @@ const Comment = require('./models/comment');
  * POST a new flag
  */
 async function create(req, res, next) {
-  console.log('Route activated', req.body);
   const { gif, article, comment } = req.body;
 
   let joiRes;
@@ -19,9 +18,11 @@ async function create(req, res, next) {
   } else if (gif) {
     joiRes = schema.gifAdd.validate(req.body);
     PostModel = Gif;
-  } else {
+  } else if (comment) {
     joiRes = schema.commentAdd.validate(req.body);
     PostModel = Comment;
+  } else {
+    return res.boom.badData('Please check your data and try again.');
   }
 
   if (joiRes.error) {

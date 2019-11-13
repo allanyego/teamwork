@@ -14,9 +14,11 @@ async function create(req, res, next) {
   if (article) {
     joiRes = schema.articleAdd.validate(req.body);
     PostModel = Article;
-  } else {
+  } else if (gif) {
     joiRes = schema.gifAdd.validate(req.body);
     PostModel = Gif;
+  } else {
+    return res.boom.badData('Please check your data and try again.');
   }
 
   if (joiRes.error) {
