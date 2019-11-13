@@ -45,18 +45,15 @@ const find = async ({ category }) => new Promise((resolve, reject) => {
     findQuery += ' WHERE (c.name=$1)';
     values.push(category);
   }
-  console.log('Going to execute query');
+
   findQuery += ' ORDER BY a.created_at DESC';
 
-  query(findQuery, values, (err, resp) => {
+  query(findQuery, values, (err, { rows }) => {
     if (err) {
-      console.log('Query error***********', err);
       return reject(err);
     }
 
-    console.log('NO error', resp);
-
-    const resArticles = resp.rows.map((row) => {
+    const resArticles = rows.map((row) => {
       const {
         u_id: userId, username, cat_id: categoryId, cat_name: categoryName,
         created_at: createdAt, updated_at: updatedAt,
