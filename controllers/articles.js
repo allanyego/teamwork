@@ -114,10 +114,11 @@ async function destroy(req, res) {
   });
 }
 
+
 module.exports = {
   create,
   find,
   findById,
-  edit,
-  destroy,
+  // edit,
+  // destroy,
 };

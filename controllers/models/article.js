@@ -99,6 +99,7 @@ const findById = (id) => new Promise((resolve, reject) => {
         updatedAt,
         category: { name: categoryName, id: categoryId },
         user: { id: userId, username },
+
       });
     },
   );
@@ -115,7 +116,6 @@ const update = async ({
   const updatedArticle = await findById(id);
   return updatedArticle;
 };
-
 const destroy = async (id) => {
   const client = await pool.connect();
   try {
