@@ -8,7 +8,7 @@
     "test": "nyc jasmine --random=false",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "lint": "eslint '**/*.{js,jsx}' --quiet",
-    "postinstall": "psql -U exskqmoncqpmho duq7vil44nk7n < test_db.pqsql"
+    "postinstall": "psql -U exskqmoncqpmho duq7vil44nk7n < test_db.pgsql"
   },
   "author": "",
   "license": "ISC",
