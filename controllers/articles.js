@@ -119,6 +119,6 @@ module.exports = {
   create,
   find,
   findById,
-  // edit,
-  // destroy,
+  edit,
+  destroy,
 };

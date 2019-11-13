@@ -2,10 +2,10 @@ const express = require('express');
 
 const {
   create,
-  // edit,
+  edit,
   find,
   findById,
-  // destroy,
+  destroy,
 } = require('../controllers/articles');
 
 const commentCtrl = require('../controllers/comments');
