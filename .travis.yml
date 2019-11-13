@@ -21,3 +21,10 @@ install:
 script:
   - npm run test
   - npm run report-coverage
+
+deploy:
+  provider: heroku
+  api_key: $HEROKU_KEY
+  app:
+    master: my-app-staging
+    production: my-app-production
