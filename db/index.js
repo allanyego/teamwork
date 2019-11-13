@@ -15,7 +15,7 @@ if (NODE_ENV === 'production' && DATABASE_URL) {
 
 pool.connect((err) => {
   if (err) {
-    console.log('DB error', err);
+    console.log('DB error', err.message);
     console.log('Are you sure your DB server is up?');
   }
 });
