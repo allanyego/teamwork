@@ -8,7 +8,7 @@
     "test": "nyc jasmine --random=false",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "lint": "eslint '**/*.{js,jsx}' --quiet",
-    "heroku-postinstall": "psql duq7vil44nk7n < test_db.pgsql"
+    "heroku-postinstall": "cat test_db.pgsql | psql duq7vil44nk7n <"
   },
   "author": "",
   "license": "ISC",
