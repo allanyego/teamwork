@@ -64,7 +64,6 @@ describe('Articles - ', () => {
     await query(insertUserQuery, userValues);
     const selectUserQuery = 'SELECT * FROM users WHERE (email=$1)';
     const usersRes = await query(selectUserQuery, ['jane@mail.com']);
-
     await query(insertCommenterQuery, commenterValues);
     const selectCommenterQuery = 'SELECT * FROM users WHERE (email=$1)';
     const commenterRes = await query(selectCommenterQuery, ['mary@mail.com']);
