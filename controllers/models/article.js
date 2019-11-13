@@ -50,6 +50,7 @@ const find = async ({ category }) => new Promise((resolve, reject) => {
 
   query(findQuery, values, (err, { rows }) => {
     if (err) {
+      console.log('Query error', err);
       return reject(err);
     }
 
