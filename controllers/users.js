@@ -1,3 +1,4 @@
+
 const bcrypt = require('bcrypt');
 
 const schema = require('./schemas/user');
@@ -21,6 +22,7 @@ const stripPassword = (user) => ({
 });
 
 async function signin(req, res) {
+  console.log('Req body signin', req.body);
   const { error } = schema.signin.validate(req.body);
   if (error) {
     return res.status(422).json({
@@ -29,7 +31,10 @@ async function signin(req, res) {
     });
   }
 
-  const [user] = await User.find({ email: req.body.email });
+  const [user] = await User.find({
+    email: req.body.email,
+    username: req.body.username,
+  });
 
   if (!user) {
     return res.status(404).json({
