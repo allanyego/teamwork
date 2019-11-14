@@ -14,7 +14,7 @@ const findById = (id) => new Promise((resolve, reject) => {
     }
 
     if (!resp.rows.length) {
-      return null;
+      return resolve(null);
     }
 
     const [gif] = resp.rows || [];

@@ -85,11 +85,11 @@ const findById = (id) => new Promise((resolve, reject) => {
         return reject(err);
       }
       if (!rows.length) {
-        resolve(null);
+        return resolve(null);
       }
       const {
         u_id: userId, username, cat_id: categoryId, cat_name: categoryName,
-        create_at: createdAt, updated_at: updatedAt,
+        created_at: createdAt, updated_at: updatedAt,
         ...rest
       } = rows[0];
 
