@@ -1,5 +1,6 @@
 const schema = require('./schemas/article');
 const Article = require('./models/article');
+const Category = require('./models/category');
 
 /**
  * POST a new article post
@@ -7,7 +8,25 @@ const Article = require('./models/article');
 async function create(req, res, next) {
   const { error } = schema.add.validate(req.body);
   if (error) {
-    return res.boom.badData(error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: error.message,
+    });
+  }
+
+  if (req.body.userId !== res.locals.userId) {
+    return res.status(200).json({
+      status: 'error',
+      error: 'You can only post articles for yourself',
+    });
+  }
+
+  const isCategory = await Category.findById(req.body.category);
+  if (!isCategory) {
+    return res.status(404).json({
+      status: 'error',
+      error: 'The specified category does not exist.',
+    });
   }
 
   try {
@@ -34,7 +53,6 @@ async function find(req, res, next) {
       data: articles,
     });
   } catch (err) {
-    console.log('Error in find', err);
     return next(err);
   }
 }
@@ -46,7 +64,10 @@ async function findById(req, res, next) {
   try {
     const article = await Article.findById(req.params.id);
     if (!article) {
-      return res.boom.notFound('No article by that identifier.');
+      return res.status(404).json({
+        status: 'error',
+        error: 'No article by that identifier.',
+      });
     }
 
     return res.json({
@@ -64,12 +85,18 @@ async function findById(req, res, next) {
 async function edit(req, res, next) {
   const anArticle = await Article.findById(req.params.id);
   if (!anArticle) {
-    return res.boom.notFound('No article by that identifier');
+    return res.status(404).json({
+      status: 'error',
+      error: 'No article by that identifier',
+    });
   }
 
   const { error/* , */ } = schema.edit.validate(req.body);
   if (error) {
-    return res.boom.badData(error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: error.message,
+    });
   }
 
   try {
@@ -97,14 +124,23 @@ async function edit(req, res, next) {
 async function destroy(req, res) {
   const theGif = await Article.findById(req.params.id);
   if (!theGif) {
-    return res.boom.notFound('No gif by that identifier');
+    return res.status(422).json({
+      status: 'error',
+      error: 'No gif by that identifier',
+    });
   }
 
   if (!res.locals.userId) {
-    return res.boom.unauthorized();
+    return res.status(401).json({
+      status: 'error',
+      error: 'Insufficient previleges to perform delete.',
+    });
   }
   if (res.locals.userId !== theGif.user.id && !res.locals.isAdmin) {
-    return res.boom.unauthorized('Not owner and not admin.');
+    return res.status(401).json({
+      status: 'error',
+      error: 'Not owner and not admin.',
+    });
   }
 
   await Article.destroy(req.params.id);
@@ -119,6 +155,6 @@ module.exports = {
   create,
   find,
   findById,
-  // edit,
-  // destroy,
+  edit,
+  destroy,
 };

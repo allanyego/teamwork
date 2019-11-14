@@ -29,6 +29,13 @@ async function create(req, res, next) {
     return res.boom.badData(joiRes.error.message);
   }
 
+  if (req.body.userId !== res.locals.userId) {
+    return res.status(200).json({
+      status: 'error',
+      error: 'You can only post flags for yourself',
+    });
+  }
+
   const aPost = await PostModel.findById(article || gif || comment);
   if (!aPost) {
     let post;

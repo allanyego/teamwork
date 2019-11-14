@@ -4,7 +4,6 @@ const { Pool } = require('pg');
 let pool;
 const { NODE_ENV, DATABASE_URL } = process.env;
 if (NODE_ENV === 'production' && DATABASE_URL) {
-  console.log('In production, Yey');
   pool = new Pool({
     connectionString: DATABASE_URL,
     ssl: true,

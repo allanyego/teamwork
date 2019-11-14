@@ -1,29 +1,24 @@
 language: node_js
 node_js:
   - node
-
 dist: trusty
-
 addons:
   postgresql: 9.6
-
 before_script:
   - createdb travis_ci_test -U postgres
   - psql travis_ci_test < test_db.pgsql -U postgres
-
+  # - dredd
 env:
   - PGDATABASE=travis_ci_test PGUSER=postgres
-
 install:
   - npm install --build-from-source
-
 script:
   - npm run test
   - npm run report-coverage
-
 deploy:
   provider: heroku
   api_key: $HEROKU_KEY
   app:
-    # master: my-app-staging
     develop: teamwork-ke-dev
+before_install:
+  # - npm install dredd@12.1.0 --global

@@ -23,13 +23,19 @@ const stripPassword = (user) => ({
 async function signin(req, res) {
   const { error } = schema.signin.validate(req.body);
   if (error) {
-    return res.boom.badData(error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: error.message,
+    });
   }
 
   const [user] = await User.find({ email: req.body.email });
 
   if (!user) {
-    return res.boom.notFound('No user by that email found');
+    return res.status(404).json({
+      status: 'error',
+      error: 'No user by that email found',
+    });
   }
 
   const valid = await bcrypt.compare(req.body.password, user.password);
@@ -42,17 +48,26 @@ async function signin(req, res) {
       data: { ...stripPassword(user), token },
     });
   }
-  return res.boom.unauthorized('Invalid authentication credentials.');
+  return res.status(401).json({
+    status: 'error',
+    error: 'Invalid authentication credentials.',
+  });
 }
 
 async function register(req, res, next) {
   if (!res.locals.isAdmin) {
-    return res.boom.unauthorized('Insufficient privileges to create account.');
+    return res.status(401).json({
+      status: 'error',
+      error: 'Insufficient privileges to create account.',
+    });
   }
   const { error } = schema.register.validate(req.body);
 
   if (error) {
-    return res.boom.badData(error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: error.message,
+    });
   }
 
   const [user] = await User.find(req.body);
@@ -83,7 +98,10 @@ const edit = async (req, res, next) => {
   const { error } = schema.edit.validate(req.body);
 
   if (error) {
-    return res.boom.badData(error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: error.message,
+    });
   }
 
   const [user] = await User.find(req.body);

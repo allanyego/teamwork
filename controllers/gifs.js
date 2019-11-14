@@ -11,12 +11,25 @@ const Category = require('./models/category');
 async function create(req, res, next) {
   const { error/* , */ } = schema.add.validate(req.body);
   if (error) {
-    return res.boom.badData(error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: error.message,
+    });
+  }
+
+  if (req.body.userId !== res.locals.userId) {
+    return res.status(200).json({
+      status: 'error',
+      error: 'You can only post gifs for yourself',
+    });
   }
 
   const isCategory = await Category.findById(req.body.category);
   if (!isCategory) {
-    return res.boom.badData('The specified category does not exist.');
+    return res.status(404).json({
+      status: 'error',
+      error: 'The specified category does not exist.',
+    });
   }
 
 
@@ -70,7 +83,10 @@ async function findById(req, res, next) {
   try {
     const gif = await Gif.findById(req.params.id);
     if (!gif) {
-      return res.boom.noFound('No gif by that identifier.');
+      return res.status(404).json({
+        status: 'error',
+        error: 'No gif by that identifier.',
+      });
     }
     return res.status(200).json({
       status: 'success',
@@ -87,12 +103,18 @@ async function findById(req, res, next) {
 async function edit(req, res, next) {
   const aGif = await Gif.findById(req.params.id);
   if (!aGif) {
-    return res.boom.notFound('No gif by that identifier');
+    return res.status(404).json({
+      status: 'error',
+      error: 'No gif by that identifier.',
+    });
   }
 
   const { error/* , */ } = schema.edit.validate(req.body);
   if (error) {
-    return res.boom.badData(error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: error.message,
+    });
   }
 
   if (aGif.user.id !== req.body.userId) {
@@ -144,15 +166,24 @@ async function edit(req, res, next) {
 async function destroy(req, res, next) {
   const theGif = await Gif.findById(req.params.id);
   if (!theGif) {
-    return res.boom.notFound('No gif by that identifier');
+    return res.status(404).json({
+      status: 'error',
+      error: 'No gif by that identifier.',
+    });
   }
 
   if (!res.locals.userId) {
-    return res.boom.unauthorized();
+    return res.status(401).json({
+      status: 'error',
+      error: 'Unauthorized request',
+    });
   }
 
   if (res.locals.userId !== theGif.user.id && !res.locals.isAdmin) {
-    return res.boom.unauthorized('Not owner and not admin.');
+    return res.status(401).json({
+      status: 'error',
+      error: 'Unauthorized. Non-owner or non-admin.',
+    });
   }
 
   try {
