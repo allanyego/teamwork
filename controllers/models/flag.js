@@ -65,7 +65,6 @@ async function findById(id) {
   } else {
     rComment = {
       id: comment.id,
-      image: comment.image,
     };
   }
 
