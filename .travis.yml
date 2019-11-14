@@ -21,4 +21,4 @@ deploy:
   app:
     develop: teamwork-ke-dev
 before_install:
-  - npm install dredd@12.1.0 --global
+  # - npm install dredd@12.1.0 --global

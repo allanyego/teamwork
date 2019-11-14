@@ -30,12 +30,8 @@ app.use((_req, res) => {
 });
 
 app.use((err, req, res) => {
-  if (err) {
-    console.log('There was an error', err);
-    res.json({
-      status: 'error',
-      error: err.message,
-    });
+  if (err && !res.headersSent) {
+    res.boom.badImplementation('Something went wrong, try again later.');
   }
 });
 
