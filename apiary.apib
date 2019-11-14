@@ -42,16 +42,16 @@ application is to facilitate more interaction between colleagues and promote tea
 + Request (application/json)
 
   + Headers
-  
+
             Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
   + Body
-  
+
             {
-            "category": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-            "title": "Favourite programming language?",
-            "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-            "userId": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30"
+              "category": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+              "title": "Favourite programming language?",
+              "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+              "userId": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30"
             }
 
 + Response 201 (application/json)
@@ -146,8 +146,8 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-            "title": "Favourite programming language?",
-            "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+              "title": "Favourite programming language?",
+              "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
             }
 
 + Response 200 (application/json)
@@ -180,8 +180,8 @@ application is to facilitate more interaction between colleagues and promote tea
     + Body
 
             {
-            "status": "error",
-            "error": "No article by that identifier."
+              "status": "error",
+              "error": "No article by that identifier."
             }
 
 + Response 422 (application/json)
@@ -189,8 +189,8 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-            "status": "error",
-            "error": "Bad data",
+              "status": "error",
+              "error": "Bad data",
             }
 
 ### Delete An Article [DELETE]
@@ -238,9 +238,9 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-            "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-            "comment": "Wooow, that was awesome!!",
-            "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+              "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+              "comment": "Wooow, that was awesome!!",
+              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
             }
 
 + Response 201 (application/json)
@@ -277,7 +277,7 @@ application is to facilitate more interaction between colleagues and promote tea
 + Response 422 (application/json)
 
   + Body
-    
+
             {
               "status": "error",
               "error": "Bad data",
@@ -309,15 +309,15 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-            "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-            "feedback": "I found this offensive...",
-            "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+              "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+              "feedback": "I found this offensive...",
+              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
             }
 
 + Response 201 (application/json)
 
   + Body
-    
+
             {
               "status": "success",
               "data": {
@@ -348,7 +348,7 @@ application is to facilitate more interaction between colleagues and promote tea
 + Response 422 (application/json)
 
   + Body
-    
+
             {
               "status": "error",
               "error": "Bad data",
@@ -400,16 +400,16 @@ application is to facilitate more interaction between colleagues and promote tea
 + Request (application/json)
 
   + Headers
-  
+
             Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
   + Body
-  
+
             {
-            "category": "89de8c60-06cc-11ea-8d1e-d1fcfe25170f",
-            "title": "Favourite programming language?",
-            "image": "an-awesome-bike.gif",
-            "userId": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30"
+              "category": "89de8c60-06cc-11ea-8d1e-d1fcfe25170f",
+              "title": "Favourite programming language?",
+              "image": "an-awesome-bike.gif",
+              "userId": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30"
             }
 
 + Response 201 (application/json)
@@ -440,8 +440,8 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-              "status": "error",
-              "data": "Not authorized",
+                "status": "error",
+                "data": "Not authorized",
             }
 
 + Response 422 (application/json)
@@ -449,8 +449,8 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-            "status": "error",
-            "data": "Bad data",
+              "status": "error",
+              "data": "Bad data",
             }
 
 ## /gifs/{id}
@@ -489,8 +489,8 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-            "status": "error",
-            "error": "No gif by that identifier."
+              "status": "error",
+              "error": "No gif by that identifier."
             }
 
 ### Update A Gif [PATCH]
@@ -536,8 +536,8 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-              "status": "error",
-              "data": "Not authorized",
+                "status": "error",
+                "data": "Not authorized",
             }
 
 + Response 404 (application/json)
@@ -545,8 +545,8 @@ application is to facilitate more interaction between colleagues and promote tea
     + Body
 
             {
-            "status": "error",
-            "error": "No gif by that identifier."
+              "status": "error",
+              "error": "No gif by that identifier."
             }
 
 + Response 422 (application/json)
@@ -554,8 +554,8 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-            "status": "error",
-            "error": "Bad data",
+              "status": "error",
+              "error": "Bad data",
             }
 
 ### Delete A Gif [DELETE]
@@ -573,8 +573,8 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-              "status": "error",
-              "data": "Not authorized",
+                "status": "error",
+                "data": "Not authorized",
             }
 
 + Response 404 (application/json)
@@ -582,8 +582,8 @@ application is to facilitate more interaction between colleagues and promote tea
     + Body
 
             {
-            "status": "error",
-            "error": "No gif by that identifier."
+              "status": "error",
+              "error": "No gif by that identifier."
             }
 
 ## /gifs/{id}/comment
@@ -603,9 +603,9 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-            "gif": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
-            "comment": "That gif is awesome dude!!",
-            "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+              "gif": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
+              "comment": "That gif is awesome dude!!",
+              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
             }
 
 + Response 201 (application/json)
@@ -674,9 +674,9 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-            "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-            "feedback": "I found this offensive...",
-            "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+              "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+              "feedback": "I found this offensive...",
+              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
             }
 
 + Response 201 (application/json)
@@ -704,7 +704,7 @@ application is to facilitate more interaction between colleagues and promote tea
 + Response 401 (application/json)
 
   + Body
-    
+
             {
               "status": "error",
               "error": "Not authorized",
@@ -736,11 +736,11 @@ application is to facilitate more interaction between colleagues and promote tea
 ### Create User  [POST]
 + Request (application/json)
   + Headers
-  
+
             Authorization: 'Bearer tfdfhdjfyreu68rehnfdjhfdjkfhcxcxhcjsdjfhd'
-    
+
   + Body
-  
+
             {
               "username": "ahm",
               "firstName": "Ahmed",
@@ -802,7 +802,7 @@ application is to facilitate more interaction between colleagues and promote tea
 ### Signin user [POST]
 + Request (application/json)
   + Body
-  
+
             {
               "email": "ahmed@mail.com",
               "password": "password",
@@ -871,9 +871,9 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-            "comment": "0957abd0-06d6-11ea-8d1e-d1fcfe25170f",
-            "feedback": "I found this inappropriate...",
-            "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+              "comment": "0957abd0-06d6-11ea-8d1e-d1fcfe25170f",
+              "feedback": "I found this inappropriate...",
+              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
             }
 
 + Response 201 (application/json)
@@ -902,8 +902,8 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-              "status": "error",
-              "error": "Not authorized",
+                "status": "error",
+                "error": "Not authorized",
             }
 
 + Response 422 (application/json)
@@ -911,8 +911,8 @@ application is to facilitate more interaction between colleagues and promote tea
   + Body
 
             {
-              "status": "error",
-              "error": "Bad data",
+                "status": "error",
+                "error": "Bad data",
             }
 
 + Response 404 (application/json)
@@ -920,8 +920,8 @@ application is to facilitate more interaction between colleagues and promote tea
     + Body
 
             {
-            "status": "error",
-            "error": "No comment found by that identifier."
+              "status": "error",
+              "error": "No comment found by that identifier."
             }
 
 ### Delete A Comment [DELETE]
@@ -947,7 +947,7 @@ application is to facilitate more interaction between colleagues and promote tea
 
     + Body
 
-          {
-            "status": "error",
-            "error": "No comment by that identifier."
-          }
+            {
+              "status": "error",
+              "error": "No comment by that identifier."
+            }
