@@ -3,32 +3,58 @@ HOST: http://polls.apiblueprint.org/
 
 # teamwork
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+Teamwork is an **internal social network** for employees of an organization. The goal of this
+application is to facilitate more interaction between colleagues and promote team bonding.
 
-## Questions Collection [/questions]
+## Articles Collection [/articles]
 
-### List All Questions [GET]
+### List All Articles [GET]
 
 + Response 200 (application/json)
 
         [
             {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
+                "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                "title": "Favourite programming language?",
+                "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                "user": {
+                    "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                    "username": "tommy",
+                },
+                "category": {
+                    "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                    "name": "software",
+                },
+                "createdAt": "2015-08-05T08:40:51.620Z",
+                "updatedAt": "2015-08-05T08:40:51.620Z",
+                ]
+            }
+        ]
+
+## Article [/articles/{id}]
+
++ Parameters
+  + id (number) - ID of the article (uuid/v1)
+
+### Get An Article [GET]
+
++ Response 200 (application/json)
+
+        [
+            {
+                "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                "title": "Favourite programming language?",
+                "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                "user": {
+                    "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                    "username": "tommy",
+                },
+                "category": {
+                    "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                    "name": "software",
+                },
+                "createdAt": "2015-08-05T08:40:51.620Z",
+                "updatedAt": "2015-08-05T08:40:51.620Z",
                 ]
             }
         ]
