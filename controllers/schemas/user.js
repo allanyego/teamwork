@@ -34,7 +34,13 @@ const register = Joi.object({
 const signin = Joi.object({
   email: Joi.string().email().lowercase().required(),
   password: Joi.string().min(8).required().strict(),
-});
+  username: Joi.string()
+    .alphanum()
+    .min(3)
+    .max(30),
+})
+
+  .or('email', 'password');
 
 const edit = Joi.object({
   firstName: Joi.string().pattern(/[a-zA-Z]/),
