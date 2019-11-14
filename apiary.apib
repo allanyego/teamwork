@@ -1,12 +1,14 @@
 FORMAT: 1A
-HOST: http://polls.apiblueprint.org/
+HOST: https://teamwork-ke-dev.herokuapp.com/api/v1/
 
 # Teamwork
 
 Teamwork is an **internal social network** for employees of an organization. The goal of this
 application is to facilitate more interaction between colleagues and promote team bonding.
 
-## Articles Collection [/articles]
+# Group Articles
+
+## /articles
 
 ### List All Articles [GET]
 
@@ -14,84 +16,86 @@ application is to facilitate more interaction between colleagues and promote tea
 
   + Body
 
-        {
-          "status": "success",
-          "data": [
-              {
-                  "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                  "title": "Favourite programming language?",
-                  "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                  "user": {
+            {
+              "status": "success",
+              "data": [
+                  {
                       "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                      "username": "tommy"
-                  },
-                  "category": {
-                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                      "name": "software"
-                  },
-                  "createdAt": "2015-08-05T08:40:51.620Z",
-                  "updatedAt": "2015-08-05T08:40:51.620Z"
-              }
-          ],
-        }
+                      "title": "Favourite programming language?",
+                      "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                      "user": {
+                          "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                          "username": "tommy"
+                      },
+                      "category": {
+                          "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                          "name": "software"
+                      },
+                      "createdAt": "2015-08-05T08:40:51.620Z",
+                      "updatedAt": "2015-08-05T08:40:51.620Z"
+                  }
+              ],
+            }
 
 ### Create a New Article [POST]
 
 + Request (application/json)
 
   + Headers
-      Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+  
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
   + Body
-      {
-        "category": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-        "title": "Favourite programming language?",
-        "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "userId": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30"
-      }
+  
+            {
+            "category": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+            "title": "Favourite programming language?",
+            "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "userId": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30"
+            }
 
 + Response 201 (application/json)
 
   + Body
 
-        {
-          "status": "success",
-          "data": {
-              "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-              "title": "Favourite programming language?",
-              "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-              "user": {
+            {
+              "status": "success",
+              "data": {
                   "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                  "username": "tommy",
+                  "title": "Favourite programming language?",
+                  "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+                  "user": {
+                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
+                  },
+                  "category": {
+                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                      "name": "software",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
               },
-              "category": {
-                  "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                  "name": "software",
-              },
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z",
-          },
-        }
+            }
 
 + Response 401 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "data": "Not authorized",
-        }
+            {
+              "status": "error",
+              "data": "Not authorized",
+            }
 
 + Response 422 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "data": "Bad data",
-        }
+            {
+              "status": "error",
+              "data": "Bad data",
+            }
 
-## Article [/articles/{id}]
+## /articles/{id}
 
 + Parameters
 
@@ -103,57 +107,9 @@ application is to facilitate more interaction between colleagues and promote tea
 
   + Body
 
-        {
-          "status": "success",
-          "data": {
-              "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-              "title": "Favourite programming language?",
-              "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-              "user": {
-                  "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                  "username": "tommy",
-              },
-              "category": {
-                  "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                  "name": "software",
-              },
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z",
-          }
-        }
-
-+ Response 404 (application/json)
-
-    + Body
-
-          {
-            "status": "error",
-            "error": "No article by that identifier."
-          }
-
-### Update An Article [PATCH]
-
-+ Request (application/json)
-
-  + Headers
-
-      Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
-
-  + Body
-
-      {
-        "title": "Favourite programming language?",
-        "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-      }
-
-+ Response 200 (application/json)
-
-  + Body
-
-        {
-          "status": "success",
-          "data": [
-              {
+            {
+              "status": "success",
+              "data": {
                   "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
                   "title": "Favourite programming language?",
                   "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
@@ -168,248 +124,40 @@ application is to facilitate more interaction between colleagues and promote tea
                   "createdAt": "2015-08-05T08:40:51.620Z",
                   "updatedAt": "2015-08-05T08:40:51.620Z",
               }
-          ]
-        }
+            }
 
 + Response 404 (application/json)
 
     + Body
 
-          {
-            "status": "error",
-            "error": "No article by that identifier."
-          }
+            {
+                "status": "error",
+                "error": "No article by that identifier."
+            }
 
-+ Response 422 (application/json)
-
-  + Body
-
-      {
-        "status": "error",
-        "error": "Bad data",
-      }
-
-### Delete An Article [DELETE]
+### Update An Article [PATCH]
 
 + Request (application/json)
 
   + Headers
 
-      Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
-
-+ Response 204 (application/json)
-
-+ Response 401 (application/json)
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
   + Body
 
-        {
-          "status": "error",
-          "data": "Not authorized",
-        }
+            {
+            "title": "Favourite programming language?",
+            "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            }
 
-+ Response 404 (application/json)
-
-  + Body
-
-    {
-      "status": "error",
-      "error": "No article found by that identifier."
-    }
-
-## Article [/articles/{id}/comment]
-
-### Post a comment [POST]
-
-+ Parameters
-
-  + id (string) - ID of the article (uuid/v1)
-
-+ Request (application/json)
-
-  + Headers
-
-      Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
++ Response 200 (application/json)
 
   + Body
 
-      {
-        "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-        "comment": "Wooow, that was awesome!!",
-        "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
-      }
-
-+ Response 201 (application/json)
-
-  + Body
-
-        {
-          "status": "success",
-          "data": {
-              "id": "c31de8f0-06c6-11ea-8d1e-d1fcfe25170f",
-              "comment": "Wooow, that was awesome!!",
-              "user": {
-                  "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
-                  "username": "tommy",
-              },
-              "article": {
-                  "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                  "title": "Favourite programming language?",
-              },
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z",
-          },
-        }
-
-+ Response 401 (application/json)
-
-  + Body
-
-        {
-          "status": "error",
-          "error": "Not authorized",
-        }
-
-+ Response 422 (application/json)
-
-  + Body
-
-        {
-          "status": "error",
-          "error": "Bad data",
-        }
-
-+ Response 404 (application/json)
-
-  + Body
-
-    {
-      "status": "error",
-      "error": "No article found by that identifier."
-    }
-
-## Article [/articles/{id}/flag]
-
-### Post a flag [POST]
-
-+ Parameters
-
-  + id (string) - ID of the article (uuid/v1)
-
-+ Request (application/json)
-
-  + Headers
-
-      Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
-
-  + Body
-
-      {
-        "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-        "feedback": "I found this offensive...",
-        "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
-      }
-
-+ Response 201 (application/json)
-
-  + Body
-
-        {
-          "status": "success",
-          "data": {
-              "id": "7ca03a10-06c9-11ea-8d1e-d1fcfe25170f",
-              "feedback": "I found this offensive...",
-              "user": {
-                  "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
-                  "username": "tommy",
-              },
-              "article": {
-                  "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                  "title": "Favourite programming language?",
-              },
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z",
-          },
-        }
-
-+ Response 401 (application/json)
-
-  + Body
-
-        {
-          "status": "error",
-          "error": "Not authorized",
-        }
-
-+ Response 422 (application/json)
-
-  + Body
-
-        {
-          "status": "error",
-          "error": "Bad data",
-        }
-
-+ Response 404 (application/json)
-
-      + Body
-
-        {
-          "status": "error",
-          "error": "No article found by that identifier."
-        }
-
-        ## Articles Collection [/articles]
-
-        ### List All Articles [GET]
-
-        + Response 200 (application/json)
-
-          + Body
-
-                {
-                  "status": "success",
-                  "data": [
-                      {
-                          "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                          "title": "Favourite programming language?",
-                          "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                          "user": {
-                              "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                              "username": "tommy"
-                          },
-                          "category": {
-                              "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                              "name": "software"
-                          },
-                          "createdAt": "2015-08-05T08:40:51.620Z",
-                          "updatedAt": "2015-08-05T08:40:51.620Z"
-                      }
-                  ],
-                }
-
-        ### Create a New Article [POST]
-
-        + Request (application/json)
-
-          + Headers
-              Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
-
-          + Body
-              {
-                "category": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                "title": "Favourite programming language?",
-                "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                "userId": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30"
-              }
-
-        + Response 201 (application/json)
-
-          + Body
-
-                {
-                  "status": "success",
-                  "data": {
+            {
+              "status": "success",
+              "data": [
+                  {
                       "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
                       "title": "Favourite programming language?",
                       "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
@@ -423,202 +171,192 @@ application is to facilitate more interaction between colleagues and promote tea
                       },
                       "createdAt": "2015-08-05T08:40:51.620Z",
                       "updatedAt": "2015-08-05T08:40:51.620Z",
-                  },
-                }
-
-        + Response 401 (application/json)
-
-          + Body
-
-                {
-                  "status": "error",
-                  "data": "Not authorized",
-                }
-
-        + Response 422 (application/json)
-
-          + Body
-
-                {
-                  "status": "error",
-                  "data": "Bad data",
-                }
-
-        ## Article [/articles/{id}]
-
-        + Parameters
-
-          + id (string) - ID of the article (uuid/v1)
-
-        ### Get An Article [GET]
-
-        + Response 200 (application/json)
-
-          + Body
-
-                {
-                  "status": "success",
-                  "data": [
-                      {
-                          "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                          "title": "Favourite programming language?",
-                          "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                          "user": {
-                              "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                              "username": "tommy",
-                          },
-                          "category": {
-                              "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                              "name": "software",
-                          },
-                          "createdAt": "2015-08-05T08:40:51.620Z",
-                          "updatedAt": "2015-08-05T08:40:51.620Z",
-                      }
-                  ]
-                }
-
-        + Response 404 (application/json)
-
-            + Body
-
-                  {
-                    "status": "error",
-                    "error": "No article by that identifier."
                   }
+              ]
+            }
 
-        ### Update An Article [PATCH]
++ Response 404 (application/json)
 
-        + Request (application/json)
+    + Body
 
-          + Headers
+            {
+            "status": "error",
+            "error": "No article by that identifier."
+            }
 
-              Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
++ Response 422 (application/json)
 
-          + Body
+  + Body
 
-              {
-                "title": "Favourite programming language?",
-                "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-              }
+            {
+            "status": "error",
+            "error": "Bad data",
+            }
 
-        + Response 200 (application/json)
+### Delete An Article [DELETE]
 
-          + Body
++ Request (application/json)
 
-                {
-                  "status": "success",
-                  "data": [
-                      {
-                          "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                          "title": "Favourite programming language?",
-                          "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-                          "user": {
-                              "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                              "username": "tommy",
-                          },
-                          "category": {
-                              "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                              "name": "software",
-                          },
-                          "createdAt": "2015-08-05T08:40:51.620Z",
-                          "updatedAt": "2015-08-05T08:40:51.620Z",
-                      }
-                  ]
-                }
+  + Headers
 
-        + Response 404 (application/json)
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
-            + Body
++ Response 204 (application/json)
 
-                  {
-                    "status": "error",
-                    "error": "No article by that identifier."
-                  }
++ Response 401 (application/json)
 
-        + Response 422 (application/json)
+  + Body
 
-          + Body
+            {
+              "status": "error",
+              "data": "Not authorized",
+            }
 
-              {
-                "status": "error",
-                "error": "Bad data",
-              }
++ Response 404 (application/json)
 
-        ### Delete An Article [DELETE]
+  + Body
 
-        + Request (application/json)
+            {
+              "status": "error",
+              "error": "No article found by that identifier."
+            }
 
-          + Headers
+## /articles/{id}/comment
 
-              Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+### Post a comment [POST]
 
-        + Response 204 (application/json)
++ Parameters
 
-        ## Article [/articles/{id}/comment]
+  + id (string) - ID of the article (uuid/v1)
 
-        ### Post a comment [POST]
++ Request (application/json)
 
-        + Parameters
+  + Headers
 
-          + id (string) - ID of the article (uuid/v1)
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
-        + Request (application/json)
+  + Body
 
-          + Headers
+            {
+            "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+            "comment": "Wooow, that was awesome!!",
+            "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+            }
 
-              Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
++ Response 201 (application/json)
 
-          + Body
+  + Body
 
-              {
-                "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                "comment": "Wooow, that was awesome!!",
-                "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
-              }
-
-        + Response 201 (application/json)
-
-          + Body
-
-                {
-                  "status": "success",
-                  "data": {
-                      "id": "c31de8f0-06c6-11ea-8d1e-d1fcfe25170f",
-                      "comment": "Wooow, that was awesome!!",
-                      "user": {
-                          "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
-                          "username": "tommy",
-                      },
-                      "article": {
-                          "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                          "title": "Favourite programming language?",
-                      },
-                      "createdAt": "2015-08-05T08:40:51.620Z",
-                      "updatedAt": "2015-08-05T08:40:51.620Z",
+            {
+              "status": "success",
+              "data": {
+                  "id": "c31de8f0-06c6-11ea-8d1e-d1fcfe25170f",
+                  "comment": "Wooow, that was awesome!!",
+                  "user": {
+                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
                   },
-                }
+                  "article": {
+                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                      "title": "Favourite programming language?",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
+              },
+            }
 
-        + Response 401 (application/json)
++ Response 401 (application/json)
 
-          + Body
+  + Body
 
-                {
-                  "status": "error",
-                  "error": "Not authorized",
-                }
+            {
+              "status": "error",
+              "error": "Not authorized",
+            }
 
-        + Response 422 (application/json)
++ Response 422 (application/json)
 
-          + Body
+  + Body
+    
+            {
+              "status": "error",
+              "error": "Bad data",
+            }
 
-                {
-                  "status": "error",
-                  "error": "Bad data",
-                }
++ Response 404 (application/json)
 
-        + Response 404 (application/json)
+  + Body
 
-          + Body
+            {
+              "status": "error",
+              "error": "No article found by that identifier."
+            }
+
+## /articles/{id}/flag
+
+### Post a flag [POST]
+
++ Parameters
+
+  + id (string) - ID of the article (uuid/v1)
+
++ Request (application/json)
+
+  + Headers
+
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+
+  + Body
+
+            {
+            "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+            "feedback": "I found this offensive...",
+            "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+            }
+
++ Response 201 (application/json)
+
+  + Body
+    
+            {
+              "status": "success",
+              "data": {
+                  "id": "7ca03a10-06c9-11ea-8d1e-d1fcfe25170f",
+                  "feedback": "I found this offensive...",
+                  "user": {
+                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
+                  },
+                  "article": {
+                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                      "title": "Favourite programming language?",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
+              },
+            }
+
++ Response 401 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "Not authorized",
+            }
+
++ Response 422 (application/json)
+
+  + Body
+    
+            {
+              "status": "error",
+              "error": "Bad data",
+            }
+
++ Response 404 (application/json)
+
+      + Body
 
             {
               "status": "error",
@@ -626,7 +364,9 @@ application is to facilitate more interaction between colleagues and promote tea
             }
 
 
-## Gifs Collection [/gifs]
+# Group Gifs
+
+## /gifs
 
 ### List All Gifs [GET]
 
@@ -634,84 +374,86 @@ application is to facilitate more interaction between colleagues and promote tea
 
   + Body
 
-        {
-          "status": "success",
-          "data": [
-              {
-                  "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                  "title": "Favourite programming language?",
-                  "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                  "user": {
+            {
+              "status": "success",
+              "data": [
+                  {
                       "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                      "username": "tommy"
-                  },
-                  "category": {
-                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                      "name": "software"
-                  },
-                  "createdAt": "2015-08-05T08:40:51.620Z",
-                  "updatedAt": "2015-08-05T08:40:51.620Z"
-              }
-          ],
-        }
+                      "title": "Favourite programming language?",
+                      "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                      "user": {
+                          "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                          "username": "tommy"
+                      },
+                      "category": {
+                          "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                          "name": "software"
+                      },
+                      "createdAt": "2015-08-05T08:40:51.620Z",
+                      "updatedAt": "2015-08-05T08:40:51.620Z"
+                  }
+              ],
+            }
 
 ### Create a New Gif [POST]
 
 + Request (application/json)
 
   + Headers
-      Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+  
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
   + Body
-      {
-        "category": "89de8c60-06cc-11ea-8d1e-d1fcfe25170f",
-        "title": "Favourite programming language?",
-        "image": "an-awesome-bike.gif",
-        "userId": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30"
-      }
+  
+            {
+            "category": "89de8c60-06cc-11ea-8d1e-d1fcfe25170f",
+            "title": "Favourite programming language?",
+            "image": "an-awesome-bike.gif",
+            "userId": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30"
+            }
 
 + Response 201 (application/json)
 
   + Body
 
-        {
-          "status": "success",
-          "data": {
-              "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
-              "title": "Favourite touring bike",
-              "image": "https://secure_url/awesome.gif",
-              "user": {
-                  "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                  "username": "tommy",
+            {
+              "status": "success",
+              "data": {
+                  "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
+                  "title": "Favourite touring bike",
+                  "image": "https://secure_url/awesome.gif",
+                  "user": {
+                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
+                  },
+                  "category": {
+                      "id": "89de8c60-06cc-11ea-8d1e-d1fcfe25170f",
+                      "name": "vehicles",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
               },
-              "category": {
-                  "id": "89de8c60-06cc-11ea-8d1e-d1fcfe25170f",
-                  "name": "vehicles",
-              },
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z",
-          },
-        }
+            }
 
 + Response 401 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "data": "Not authorized",
-        }
+            {
+              "status": "error",
+              "data": "Not authorized",
+            }
 
 + Response 422 (application/json)
 
   + Body
 
-      {
-        "status": "error",
-        "data": "Bad data",
-      }
+            {
+            "status": "error",
+            "data": "Bad data",
+            }
 
-## Gif [/gifs/{id}]
+## /gifs/{id}
 
 + Parameters
 
@@ -723,33 +465,33 @@ application is to facilitate more interaction between colleagues and promote tea
 
   + Body
 
-        {
-          "status": "success",
-          "data": {
-              "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
-              "title": "Favourite touring bike",
-              "image": "https://secure_url/awesome.gif",
-              "user": {
-                  "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                  "username": "tommy",
-              },
-              "category": {
-                  "id": "89de8c60-06cc-11ea-8d1e-d1fcfe25170f",
-                  "name": "vehicles",
-              },
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z",
-          }
-        }
+            {
+              "status": "success",
+              "data": {
+                  "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
+                  "title": "Favourite touring bike",
+                  "image": "https://secure_url/awesome.gif",
+                  "user": {
+                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
+                  },
+                  "category": {
+                      "id": "89de8c60-06cc-11ea-8d1e-d1fcfe25170f",
+                      "name": "vehicles",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
+              }
+            }
 
 + Response 404 (application/json)
 
   + Body
 
-      {
-        "status": "error",
-        "error": "No gif by that identifier."
-      }
+            {
+            "status": "error",
+            "error": "No gif by that identifier."
+            }
 
 ### Update A Gif [PATCH]
 
@@ -757,64 +499,64 @@ application is to facilitate more interaction between colleagues and promote tea
 
   + Headers
 
-      Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
   + Body
 
-      {
-        "title": "The old timer",
-        "image": "a-new-old-bike.gif"
-      }
+            {
+            "title": "The old timer",
+            "image": "a-new-old-bike.gif"
+            }
 
 + Response 200 (application/json)
 
   + Body
 
-        {
-          "status": "success",
-          "data": {
-              "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
-              "title": "The old timer",
-              "image": "http://secure_url/a-new-old-bike.gif",
-              "user": {
-                  "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                  "username": "tommy",
-              },
-              "category": {
-                  "id": "89de8c60-06cc-11ea-8d1e-d1fcfe25170f",
-                  "name": "vehicles",
-              },
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z",
-          }
-        }
+            {
+              "status": "success",
+              "data": {
+                  "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
+                  "title": "The old timer",
+                  "image": "http://secure_url/a-new-old-bike.gif",
+                  "user": {
+                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
+                  },
+                  "category": {
+                      "id": "89de8c60-06cc-11ea-8d1e-d1fcfe25170f",
+                      "name": "vehicles",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
+              }
+            }
 
 + Response 401 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "data": "Not authorized",
-        }
+            {
+              "status": "error",
+              "data": "Not authorized",
+            }
 
 + Response 404 (application/json)
 
     + Body
 
-          {
+            {
             "status": "error",
             "error": "No gif by that identifier."
-          }
+            }
 
 + Response 422 (application/json)
 
   + Body
 
-      {
-        "status": "error",
-        "error": "Bad data",
-      }
+            {
+            "status": "error",
+            "error": "Bad data",
+            }
 
 ### Delete A Gif [DELETE]
 
@@ -822,7 +564,7 @@ application is to facilitate more interaction between colleagues and promote tea
 
   + Headers
 
-      Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
 + Response 204 (application/json)
 
@@ -830,21 +572,21 @@ application is to facilitate more interaction between colleagues and promote tea
 
   + Body
 
-        {
-          "status": "error",
-          "data": "Not authorized",
-        }
+            {
+              "status": "error",
+              "data": "Not authorized",
+            }
 
 + Response 404 (application/json)
 
     + Body
 
-          {
+            {
             "status": "error",
             "error": "No gif by that identifier."
-          }
+            }
 
-## Gif [/gifs/{id}/comment]
+## /gifs/{id}/comment
 
 + Parameters
 
@@ -856,66 +598,66 @@ application is to facilitate more interaction between colleagues and promote tea
 
   + Headers
 
-      Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
   + Body
 
-      {
-        "gif": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
-        "comment": "That gif is awesome dude!!",
-        "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
-      }
+            {
+            "gif": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
+            "comment": "That gif is awesome dude!!",
+            "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+            }
 
 + Response 201 (application/json)
 
   + Body
 
-        {
-          "status": "success",
-          "data": {
-              "id": "0957abd0-06d6-11ea-8d1e-d1fcfe25170f",
-              "comment": "That gif is awesome dude!!",
-              "user": {
-                "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
-                "username": "tommy",
+            {
+              "status": "success",
+              "data": {
+                  "id": "0957abd0-06d6-11ea-8d1e-d1fcfe25170f",
+                  "comment": "That gif is awesome dude!!",
+                  "user": {
+                    "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
+                    "username": "tommy",
+                  },
+                  "gif": {
+                    "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
+                    "title": "The old timer",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
               },
-              "gif": {
-                "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
-                "title": "The old timer",
-              },
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z",
-          },
-        }
+            }
 
 + Response 401 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "error": "Not authorized",
-        }
+            {
+              "status": "error",
+              "error": "Not authorized",
+            }
 
 + Response 422 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "error": "Bad data",
-        }
+            {
+              "status": "error",
+              "error": "Bad data",
+            }
 
 + Response 404 (application/json)
 
   + Body
 
-    {
-      "status": "error",
-      "error": "No article found by that identifier."
-    }
+            {
+              "status": "error",
+              "error": "No article found by that identifier."
+            }
 
-## Gif [/gifs/{id}/flag]
+## /gifs/{id}/flag
 
 ### Post a flag [POST]
 
@@ -927,124 +669,79 @@ application is to facilitate more interaction between colleagues and promote tea
 
   + Headers
 
-      Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
   + Body
 
-      {
-        "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-        "feedback": "I found this offensive...",
-        "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
-      }
+            {
+            "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+            "feedback": "I found this offensive...",
+            "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+            }
 
 + Response 201 (application/json)
 
   + Body
 
-        {
-          "status": "success",
-          "data": {
-              "id": "5df72f30-06d6-11ea-8d1e-d1fcfe25170f",
-              "feedback": "I found this offensive...",
-              "user": {
-                  "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
-                  "username": "tommy",
+            {
+              "status": "success",
+              "data": {
+                  "id": "5df72f30-06d6-11ea-8d1e-d1fcfe25170f",
+                  "feedback": "I found this offensive...",
+                  "user": {
+                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
+                  },
+                  "gif": {
+                    "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
+                    "title": "The old timer",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
               },
-              "gif": {
-                "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
-                "title": "The old timer",
-              },
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z",
-          },
-        }
+            }
 
 + Response 401 (application/json)
 
   + Body
-
-        {
-          "status": "error",
-          "error": "Not authorized",
-        }
+    
+            {
+              "status": "error",
+              "error": "Not authorized",
+            }
 
 + Response 422 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "error": "Bad data",
-        }
+            {
+              "status": "error",
+              "error": "Bad data",
+            }
 
 + Response 404 (application/json)
 
       + Body
 
-        {
-          "status": "error",
-          "error": "No article found by that identifier."
-        }
-
-        ## Articles Collection [/articles]
-
-        ### List All Articles [GET]
-
-        + Response 200 (application/json)
-
-          + Body
-
-                {
-                  "status": "success",
-                  "data": [
-                      {
-                          "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                          "title": "Favourite programming language?",
-                          "text": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                          "user": {
-                              "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                              "username": "tommy"
-                          },
-                          "category": {
-                              "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                              "name": "software"
-                          },
-                          "createdAt": "2015-08-05T08:40:51.620Z",
-                          "updatedAt": "2015-08-05T08:40:51.620Z"
-                      }
-                  ],
-                }
+            {
+              "status": "error",
+              "error": "No article found by that identifier."
+            }
 
 
-## User [/auth/create-user]
+# Group Auth
+
+## /auth/create-user
 
 ### Create User  [POST]
 + Request (application/json)
   + Headers
-    Authorization 'Bearer tfdfhdjfyreu68rehnfdjhfdjkfhcxcxhcjsdjfhd'
+  
+            Authorization: 'Bearer tfdfhdjfyreu68rehnfdjhfdjkfhcxcxhcjsdjfhd'
+    
   + Body
-    {
-      "username": "ahm",
-      "firstName": "Ahmed",
-      "lastName": "Jude",
-      "email": "ahmed@mail.com",
-      "password": "password",
-      "gender": "male",
-      "mobile": "079445322",
-      "address": "34 Fito",
-      "department": "sales",
-      "role": "ceo",
-    }
-
-+ Response 201 (application/json)
-
-  + Body
-
-        {
-          "status": "success",
-          "data": {
-              "token": "tfdfhdjfyreu68rehnfdjhfdjkfhcxcxh4545jfhd",
-              "id": "dcc00a10-06e2-11ea-8f0e-9168c8a7677c",
+  
+            {
               "username": "ahm",
               "firstName": "Ahmed",
               "lastName": "Jude",
@@ -1055,87 +752,109 @@ application is to facilitate more interaction between colleagues and promote tea
               "address": "34 Fito",
               "department": "sales",
               "role": "ceo",
-              "type": "user",
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z"
-          },
-        }
+            }
+
++ Response 201 (application/json)
+
+  + Body
+
+            {
+              "status": "success",
+              "data": {
+                  "token": "tfdfhdjfyreu68rehnfdjhfdjkfhcxcxh4545jfhd",
+                  "id": "dcc00a10-06e2-11ea-8f0e-9168c8a7677c",
+                  "username": "ahm",
+                  "firstName": "Ahmed",
+                  "lastName": "Jude",
+                  "email": "ahmed@mail.com",
+                  "password": "password",
+                  "gender": "male",
+                  "mobile": "079445322",
+                  "address": "34 Fito",
+                  "department": "sales",
+                  "role": "ceo",
+                  "type": "user",
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z"
+              },
+            }
 
 + Response 401 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "error": "Insufficient privileges to create account.",
-        }
+            {
+              "status": "error",
+              "error": "Insufficient privileges to create account.",
+            }
 
 + Response 422 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "error": "Bad data",
-        }
+            {
+              "status": "error",
+              "error": "Bad data",
+            }
 
-## User [/auth/signin]
+## /auth/signin
 
 ### Signin user [POST]
 + Request (application/json)
   + Body
-    {
-      "email": "ahmed@mail.com",
-      "password": "password",
-    }
+  
+            {
+              "email": "ahmed@mail.com",
+              "password": "password",
+            }
 
 + Response 201 (application/json)
 
   + Body
 
-        {
-          "status": "success",
-          "data": {
-              "token": "tfdfhdjfyreu68rehnfdjhfdjkfhcxcxh4545jfhd",
-              "id": "dcc00a10-06e2-11ea-8f0e-9168c8a7677c",
-              "username": "ahm",
-              "firstName": "Ahmed",
-              "lastName": "Jude",
-              "email": "ahmed@mail.com",
-              "password": "password",
-              "gender": "male",
-              "mobile": "079445322",
-              "address": "34 Fito",
-              "department": "sales",
-              "role": "ceo",
-              "type": "user",
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z"
-          },
-        }
+            {
+              "status": "success",
+              "data": {
+                  "token": "tfdfhdjfyreu68rehnfdjhfdjkfhcxcxh4545jfhd",
+                  "id": "dcc00a10-06e2-11ea-8f0e-9168c8a7677c",
+                  "username": "ahm",
+                  "firstName": "Ahmed",
+                  "lastName": "Jude",
+                  "email": "ahmed@mail.com",
+                  "password": "password",
+                  "gender": "male",
+                  "mobile": "079445322",
+                  "address": "34 Fito",
+                  "department": "sales",
+                  "role": "ceo",
+                  "type": "user",
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z"
+              },
+            }
 
 + Response 401 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "error": "Invalid authentication credentials.",
-        }
+            {
+              "status": "error",
+              "error": "Invalid authentication credentials.",
+            }
 
 + Response 404 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "error": "No user by that email found",
-        }
+            {
+              "status": "error",
+              "error": "No user by that email found",
+            }
 
 
-## Comments Collection [/comments]
+# Group Comments Collection
 
-## Gif [/comments/{id}/flag]
+## /comments/{id}/flag
 
 ### Post a flag [POST]
 
@@ -1147,60 +866,88 @@ application is to facilitate more interaction between colleagues and promote tea
 
   + Headers
 
-      Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
 
   + Body
 
-      {
-        "comment": "0957abd0-06d6-11ea-8d1e-d1fcfe25170f",
-        "feedback": "I found this inappropriate...",
-        "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
-      }
+            {
+            "comment": "0957abd0-06d6-11ea-8d1e-d1fcfe25170f",
+            "feedback": "I found this inappropriate...",
+            "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+            }
 
 + Response 201 (application/json)
 
   + Body
 
-        {
-          "status": "success",
-          "data": {
-              "id": "1e8139f0-06ee-11ea-8f0e-9168c8a7677c",
-              "feedback": "I found this inappropriate...",
-              "user": {
-                  "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
-                  "username": "tommy",
+            {
+              "status": "success",
+              "data": {
+                  "id": "1e8139f0-06ee-11ea-8f0e-9168c8a7677c",
+                  "feedback": "I found this inappropriate...",
+                  "user": {
+                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
+                  },
+                  "comment": {
+                    "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
               },
-              "comment": {
-                "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
-              },
-              "createdAt": "2015-08-05T08:40:51.620Z",
-              "updatedAt": "2015-08-05T08:40:51.620Z",
-          },
-        }
+            }
 
 + Response 401 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "error": "Not authorized",
-        }
+            {
+              "status": "error",
+              "error": "Not authorized",
+            }
 
 + Response 422 (application/json)
 
   + Body
 
-        {
-          "status": "error",
-          "error": "Bad data",
-        }
+            {
+              "status": "error",
+              "error": "Bad data",
+            }
 
 + Response 404 (application/json)
 
     + Body
 
-      {
-        "status": "error",
-        "error": "No comment found by that identifier."
-      }
+            {
+            "status": "error",
+            "error": "No comment found by that identifier."
+            }
+
+### Delete A Comment [DELETE]
+
++ Request (application/json)
+
+  + Headers
+
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+
++ Response 204 (application/json)
+
++ Response 401 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "data": "Not authorized",
+            }
+
++ Response 404 (application/json)
+
+    + Body
+
+          {
+            "status": "error",
+            "error": "No comment by that identifier."
+          }
