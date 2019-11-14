@@ -18,18 +18,32 @@ async function create(req, res, next) {
     joiRes = schema.gifAdd.validate(req.body);
     PostModel = Gif;
   } else {
-    return res.boom.badData('Please check your data and try again.');
+    return res.status(422).json({
+      status: 'error',
+      error: 'Please check your data and try again.',
+    });
   }
 
   if (joiRes.error) {
-    return res.boom.badData(joiRes.error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: joiRes.error.message,
+    });
+  }
+
+  if (req.body.userId !== res.locals.userId) {
+    return res.status(200).json({
+      status: 'error',
+      error: 'You can only post comments for yourself',
+    });
   }
 
   const aPost = await PostModel.findById(gif || article);
   if (!aPost) {
-    return res.boom.notFound(
-      `The specified ${article ? 'article' : 'gif'} does not exist.`,
-    );
+    return res.status(404).json({
+      status: 'error',
+      error: `The specified ${article ? 'article' : 'gif'} does not exist.`,
+    });
   }
 
   try {
@@ -63,7 +77,10 @@ async function findById(req, res) {
   const theComment = await Comment.findById(req.params.id);
 
   if (!theComment) {
-    return res.boom.notFound('No comment found by that identifier');
+    return res.status(404).json({
+      status: 'console.error();',
+      error: 'No comment found by that identifier',
+    });
   }
   return res.json({
     status: 'success',
@@ -77,12 +94,18 @@ async function findById(req, res) {
 async function edit(req, res, next) {
   const { error } = schema.edit.validate(req.body);
   if (error) {
-    return res.boom.badData(error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: error.message,
+    });
   }
 
   const aComment = await Comment.findById(req.params.id);
   if (!aComment) {
-    return res.boom.notFound('No comment found by that identifier.');
+    return res.status(404).json({
+      status: 'error',
+      error: 'No comment found by that identifier.',
+    });
   }
 
   try {
@@ -105,14 +128,23 @@ async function destroy(req, res, next) {
   const theComment = await Comment.findById(req.params.id);
 
   if (!theComment) {
-    return res.boom.notFound('No comment found by that identifier');
+    return res.status(404).json({
+      status: 'error',
+      error: 'No comment found by that identifier',
+    });
   }
 
   if (!res.locals.userId) {
-    return res.boom.unauthorized();
+    return res.status(401).json({
+      status: 'error',
+      error: 'Insufficient credentials.',
+    });
   }
   if (res.locals.userId !== theComment.user.id && !res.locals.isAdmin) {
-    return res.boom.unauthorized('Not owner and not admin');
+    return res.status(401).son({
+      status: 'error',
+      error: 'Not owner and not admin',
+    });
   }
 
   try {
