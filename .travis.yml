@@ -7,7 +7,7 @@ addons:
 before_script:
   - createdb travis_ci_test -U postgres
   - psql travis_ci_test < test_db.pgsql -U postgres
-  - dredd
+  # - dredd
 env:
   - PGDATABASE=travis_ci_test PGUSER=postgres
 install:
