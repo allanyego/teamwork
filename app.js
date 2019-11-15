@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const boom = require('express-boom');
+// const boom = require('express-boom');
 // const cors = require('cors');
 
 const { apiRouter } = require('./routes/');
@@ -20,12 +20,12 @@ function cors() {
 
 const app = express();
 
-app.use(boom());
+// app.use(boom());
 app.use(cors());
-app.use(bodyParser.urlencoded({
-  extended: true,
-}));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: false,
+}));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/v1', apiRouter);
 app.use((_req, res) => {
@@ -33,7 +33,9 @@ app.use((_req, res) => {
 });
 
 app.use((err, req, res) => {
-  if (err && !res.headersSent) {
+  if (err) {
+    console.log(!res.headersSent);
+    console.log(err);
     res.boom.badImplementation('Something went wrong, try again later.');
   }
 });

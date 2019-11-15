@@ -93,6 +93,7 @@ async function findById(req, res, next) {
       data: gif,
     });
   } catch (e) {
+    console.log('Error caught', e);
     return next(e);
   }
 }
