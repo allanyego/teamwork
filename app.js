@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const methodOverride = require('method-override');
 // const boom = require('express-boom');
 // const cors = require('cors');
 
@@ -21,6 +22,7 @@ function cors() {
 const app = express();
 
 // app.use(boom());
+app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
