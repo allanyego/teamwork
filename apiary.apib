@@ -1,15 +1,24 @@
 FORMAT: 1A
-HOST: https://teamwork-ke-dev.herokuapp.com/api/v1/
+HOST: http://localhost:3000/api/v1/
 
 # Teamwork
 
 Teamwork is an **internal social network** for employees of an organization. The goal of this
 application is to facilitate more interaction between colleagues and promote team bonding.
 
-# Group Articles
+# Group Article
+Represents article details.
 
-## /articles
+---
+**Article attributes:**
 
+- id `(String)` : unique identifier.
+- category `(String)` : ID of category.
+- title `(String)` : article title.
+- text `(String)` : article text.
+- userId `(String)` : ID of user posting article.
+
+## Article Collection [/articles(?category)]
 ### List All Articles [GET]
 
 + Response 200 (application/json)
@@ -95,7 +104,7 @@ application is to facilitate more interaction between colleagues and promote tea
               "data": "Bad data",
             }
 
-## /articles/{id}
+## Article [/articles/{id}]
 
 + Parameters
 
@@ -221,153 +230,20 @@ application is to facilitate more interaction between colleagues and promote tea
               "error": "No article found by that identifier."
             }
 
-## /articles/{id}/comment
 
-### Post a comment [POST]
+# Group Gif
+Represents gif details.
 
-+ Parameters
+---
+**Gif attributes:**
 
-  + id (string) - ID of the article (uuid/v1)
+- id `(String)` : unique identifier.
+- category `(String)` : ID of category.
+- title `(String)` : article title.
+- image `(File)` : gif image to upload.
+- userId `(String)` : ID of user posting article.
 
-+ Request (application/json)
-
-  + Headers
-
-            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
-
-  + Body
-
-            {
-              "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-              "comment": "Wooow, that was awesome!!",
-              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
-            }
-
-+ Response 201 (application/json)
-
-  + Body
-
-            {
-              "status": "success",
-              "data": {
-                  "id": "c31de8f0-06c6-11ea-8d1e-d1fcfe25170f",
-                  "comment": "Wooow, that was awesome!!",
-                  "user": {
-                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
-                      "username": "tommy",
-                  },
-                  "article": {
-                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                      "title": "Favourite programming language?",
-                  },
-                  "createdAt": "2015-08-05T08:40:51.620Z",
-                  "updatedAt": "2015-08-05T08:40:51.620Z",
-              },
-            }
-
-+ Response 401 (application/json)
-
-  + Body
-
-            {
-              "status": "error",
-              "error": "Not authorized",
-            }
-
-+ Response 422 (application/json)
-
-  + Body
-
-            {
-              "status": "error",
-              "error": "Bad data",
-            }
-
-+ Response 404 (application/json)
-
-  + Body
-
-            {
-              "status": "error",
-              "error": "No article found by that identifier."
-            }
-
-## /articles/{id}/flag
-
-### Post a flag [POST]
-
-+ Parameters
-
-  + id (string) - ID of the article (uuid/v1)
-
-+ Request (application/json)
-
-  + Headers
-
-            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
-
-  + Body
-
-            {
-              "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-              "feedback": "I found this offensive...",
-              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
-            }
-
-+ Response 201 (application/json)
-
-  + Body
-
-            {
-              "status": "success",
-              "data": {
-                  "id": "7ca03a10-06c9-11ea-8d1e-d1fcfe25170f",
-                  "feedback": "I found this offensive...",
-                  "user": {
-                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
-                      "username": "tommy",
-                  },
-                  "article": {
-                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-                      "title": "Favourite programming language?",
-                  },
-                  "createdAt": "2015-08-05T08:40:51.620Z",
-                  "updatedAt": "2015-08-05T08:40:51.620Z",
-              },
-            }
-
-+ Response 401 (application/json)
-
-  + Body
-
-            {
-              "status": "error",
-              "error": "Not authorized",
-            }
-
-+ Response 422 (application/json)
-
-  + Body
-
-            {
-              "status": "error",
-              "error": "Bad data",
-            }
-
-+ Response 404 (application/json)
-
-      + Body
-
-            {
-              "status": "error",
-              "error": "No article found by that identifier."
-            }
-
-
-# Group Gifs
-
-## /gifs
-
+## Gif Collection [/gifs(?category)]
 ### List All Gifs [GET]
 
 + Response 200 (application/json)
@@ -397,7 +273,7 @@ application is to facilitate more interaction between colleagues and promote tea
 
 ### Create a New Gif [POST]
 
-+ Request (application/json)
++ Request (multipart/form-data)
 
   + Headers
 
@@ -453,7 +329,7 @@ application is to facilitate more interaction between colleagues and promote tea
               "data": "Bad data",
             }
 
-## /gifs/{id}
+## Gif [/gifs/{id}]
 
 + Parameters
 
@@ -495,7 +371,7 @@ application is to facilitate more interaction between colleagues and promote tea
 
 ### Update A Gif [PATCH]
 
-+ Request (application/json)
++ Request (multipart/form-data)
 
   + Headers
 
@@ -586,7 +462,454 @@ application is to facilitate more interaction between colleagues and promote tea
               "error": "No gif by that identifier."
             }
 
-## /gifs/{id}/comment
+
+# Group User
+Represents user details.
+
+---
+**User attributes:**
+
+- id `(Number)` : unique identifier.
+- firstName `(String)` : First Name.
+- lastName `(String)` : Last Name.
+- email `(String)` : email id of the user.
+- password `(String)` : user password
+- gender `(String)` : user gender
+- mobile `(String)` : user mobile
+- address `(String)` : user address
+- department `(String)` : department assigned
+- role `(String)` : role assigned
+- type `(String)` : user account type
+- token `(String)` : auth token
+
+## User [/auth/create-user]
+
+### Create User  [POST]
++ Request (application/json)
+  + Headers
+
+            Authorization: 'Bearer tfdfhdjfyreu68rehnfdjhfdjkfhcxcxhcjsdjfhd'
+
+  + Body
+
+            {
+              "username": "ahm",
+              "firstName": "Ahmed",
+              "lastName": "Jude",
+              "email": "ahmed@mail.com",
+              "password": "password",
+              "gender": "male",
+              "mobile": "079445322",
+              "address": "34 Fito",
+              "department": "sales",
+              "role": "ceo",
+            }
+
++ Response 201 (application/json)
+
+  + Body
+
+            {
+              "status": "success",
+              "data": {
+                  "token": "tfdfhdjfyreu68rehnfdjhfdjkfhcxcxh4545jfhd",
+                  "id": "dcc00a10-06e2-11ea-8f0e-9168c8a7677c",
+                  "username": "ahm",
+                  "firstName": "Ahmed",
+                  "lastName": "Jude",
+                  "email": "ahmed@mail.com",
+                  "password": "password",
+                  "gender": "male",
+                  "mobile": "079445322",
+                  "address": "34 Fito",
+                  "department": "sales",
+                  "role": "ceo",
+                  "type": "user",
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z"
+              },
+            }
+
++ Response 401 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "Insufficient privileges to create account.",
+            }
+
++ Response 422 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "Bad data",
+            }
+
+## User [/auth/signin]
+
+### Signin user [POST]
+
++ Request (application/json)
+
+  + Body
+
+            {
+              "email": "ahmed@mail.com",
+              "password": "password"
+            }
+
++ Response 200 (application/json)
+
+  + Body
+
+            {
+              "status": "success",
+              "data": {
+                  "token": "tfdfhdjfyreu68rehnfdjhfdjkfhcxcxh4545jfhd",
+                  "id": "dcc00a10-06e2-11ea-8f0e-9168c8a7677c",
+                  "username": "ahm",
+                  "firstName": "Ahmed",
+                  "lastName": "Jude",
+                  "email": "ahmed@mail.com",
+                  "password": "password",
+                  "gender": "male",
+                  "mobile": "079445322",
+                  "address": "34 Fito",
+                  "department": "sales",
+                  "role": "ceo",
+                  "type": "user",
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z"
+              },
+            }
+
++ Response 401 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "Invalid authentication credentials.",
+            }
+
++ Response 404 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "No user by that email found",
+            }
+
+
+# Group Flag
+Represents flag details.
+
+---
+**Flag attributes:**
+
+- id `(String)` : unique identifier.
+- feedback `(String)` : flag text.
+- userId `(String)` : user flagging.
+
+## Article flag [/articles/{id}/flag]
+
+### Post a flag [POST]
+
++ Parameters
+
+  + id (string) - ID of the article (uuid/v1)
+
++ Request (application/json)
+
+  + Headers
+
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+
+  + Body
+
+            {
+              "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+              "feedback": "I found this offensive...",
+              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+            }
+
++ Response 201 (application/json)
+
+  + Body
+
+            {
+              "status": "success",
+              "data": {
+                  "id": "7ca03a10-06c9-11ea-8d1e-d1fcfe25170f",
+                  "feedback": "I found this offensive...",
+                  "user": {
+                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
+                  },
+                  "article": {
+                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                      "title": "Favourite programming language?",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
+              },
+            }
+
++ Response 401 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "Not authorized",
+            }
+
++ Response 422 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "Bad data",
+            }
+
++ Response 404 (application/json)
+
+      + Body
+
+            {
+              "status": "error",
+              "error": "No article found by that identifier."
+            }
+
+## Comment flag [/comments/{id}/flag]
+
+### Post a comment flag [POST]
+
++ Parameters
+
+  + id (string) - ID of the article (uuid/v1)
+
++ Request (application/json)
+
+  + Headers
+
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+
+  + Body
+
+            {
+              "comment": "0957abd0-06d6-11ea-8d1e-d1fcfe25170f",
+              "feedback": "I found this inappropriate...",
+              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+            }
+
++ Response 201 (application/json)
+
+  + Body
+
+            {
+              "status": "success",
+              "data": {
+                  "id": "1e8139f0-06ee-11ea-8f0e-9168c8a7677c",
+                  "feedback": "I found this inappropriate...",
+                  "user": {
+                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
+                  },
+                  "comment": {
+                    "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
+              },
+            }
+
++ Response 401 (application/json)
+
+  + Body
+
+            {
+                "status": "error",
+                "error": "Not authorized",
+            }
+
++ Response 422 (application/json)
+
+  + Body
+
+            {
+                "status": "error",
+                "error": "Bad data",
+            }
+
++ Response 404 (application/json)
+
+    + Body
+
+            {
+              "status": "error",
+              "error": "No comment found by that identifier."
+            }
+
+## Gif flag [/gifs/{id}/flag]
+
+### Post a gif flag [POST]
+
++ Parameters
+
+  + id (string) - ID of the article (uuid/v1)
+
++ Request (application/json)
+
+  + Headers
+
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+
+  + Body
+
+            {
+              "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+              "feedback": "I found this offensive...",
+              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+            }
+
++ Response 201 (application/json)
+
+  + Body
+
+            {
+              "status": "success",
+              "data": {
+                  "id": "5df72f30-06d6-11ea-8d1e-d1fcfe25170f",
+                  "feedback": "I found this offensive...",
+                  "user": {
+                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
+                  },
+                  "gif": {
+                    "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
+                    "title": "The old timer",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
+              },
+            }
+
++ Response 401 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "Not authorized",
+            }
+
++ Response 422 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "Bad data",
+            }
+
++ Response 404 (application/json)
+
+      + Body
+
+            {
+              "status": "error",
+              "error": "No article found by that identifier."
+            }
+
+
+# Group Comment
+Represents comment details.
+
+---
+**Comment attributes:**
+
+- id `(String)` : unique identifier.
+- comment `(String)` : comment body.
+- userId `(String)` : commenter.
+
+## Article comment [/articles/{id}/comment]
+
+### Post an article comment [POST]
+
++ Parameters
+
+  + id (string) - ID of the article (uuid/v1)
+
++ Request (application/json)
+
+  + Headers
+
+            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
+
+  + Body
+
+            {
+              "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+              "comment": "Wooow, that was awesome!!",
+              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
+            }
+
++ Response 201 (application/json)
+
+  + Body
+
+            {
+              "status": "success",
+              "data": {
+                  "id": "c31de8f0-06c6-11ea-8d1e-d1fcfe25170f",
+                  "comment": "Wooow, that was awesome!!",
+                  "user": {
+                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
+                      "username": "tommy",
+                  },
+                  "article": {
+                      "id": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
+                      "title": "Favourite programming language?",
+                  },
+                  "createdAt": "2015-08-05T08:40:51.620Z",
+                  "updatedAt": "2015-08-05T08:40:51.620Z",
+              },
+            }
+
++ Response 401 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "Not authorized",
+            }
+
++ Response 422 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "Bad data",
+            }
+
++ Response 404 (application/json)
+
+  + Body
+
+            {
+              "status": "error",
+              "error": "No article found by that identifier."
+            }
+
+## Gif comment [/gifs/{id}/comment]
 
 + Parameters
 
@@ -657,272 +980,11 @@ application is to facilitate more interaction between colleagues and promote tea
               "error": "No article found by that identifier."
             }
 
-## /gifs/{id}/flag
-
-### Post a flag [POST]
+## Comment [/comments/{id}]
 
 + Parameters
 
-  + id (string) - ID of the article (uuid/v1)
-
-+ Request (application/json)
-
-  + Headers
-
-            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
-
-  + Body
-
-            {
-              "article": "a4e49bd0-064f-11ea-bda7-0f1cd9030e30",
-              "feedback": "I found this offensive...",
-              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
-            }
-
-+ Response 201 (application/json)
-
-  + Body
-
-            {
-              "status": "success",
-              "data": {
-                  "id": "5df72f30-06d6-11ea-8d1e-d1fcfe25170f",
-                  "feedback": "I found this offensive...",
-                  "user": {
-                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
-                      "username": "tommy",
-                  },
-                  "gif": {
-                    "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
-                    "title": "The old timer",
-                  },
-                  "createdAt": "2015-08-05T08:40:51.620Z",
-                  "updatedAt": "2015-08-05T08:40:51.620Z",
-              },
-            }
-
-+ Response 401 (application/json)
-
-  + Body
-
-            {
-              "status": "error",
-              "error": "Not authorized",
-            }
-
-+ Response 422 (application/json)
-
-  + Body
-
-            {
-              "status": "error",
-              "error": "Bad data",
-            }
-
-+ Response 404 (application/json)
-
-      + Body
-
-            {
-              "status": "error",
-              "error": "No article found by that identifier."
-            }
-
-
-# Group Auth
-
-## /auth/create-user
-
-### Create User  [POST]
-+ Request (application/json)
-  + Headers
-
-            Authorization: 'Bearer tfdfhdjfyreu68rehnfdjhfdjkfhcxcxhcjsdjfhd'
-
-  + Body
-
-            {
-              "username": "ahm",
-              "firstName": "Ahmed",
-              "lastName": "Jude",
-              "email": "ahmed@mail.com",
-              "password": "password",
-              "gender": "male",
-              "mobile": "079445322",
-              "address": "34 Fito",
-              "department": "sales",
-              "role": "ceo",
-            }
-
-+ Response 201 (application/json)
-
-  + Body
-
-            {
-              "status": "success",
-              "data": {
-                  "token": "tfdfhdjfyreu68rehnfdjhfdjkfhcxcxh4545jfhd",
-                  "id": "dcc00a10-06e2-11ea-8f0e-9168c8a7677c",
-                  "username": "ahm",
-                  "firstName": "Ahmed",
-                  "lastName": "Jude",
-                  "email": "ahmed@mail.com",
-                  "password": "password",
-                  "gender": "male",
-                  "mobile": "079445322",
-                  "address": "34 Fito",
-                  "department": "sales",
-                  "role": "ceo",
-                  "type": "user",
-                  "createdAt": "2015-08-05T08:40:51.620Z",
-                  "updatedAt": "2015-08-05T08:40:51.620Z"
-              },
-            }
-
-+ Response 401 (application/json)
-
-  + Body
-
-            {
-              "status": "error",
-              "error": "Insufficient privileges to create account.",
-            }
-
-+ Response 422 (application/json)
-
-  + Body
-
-            {
-              "status": "error",
-              "error": "Bad data",
-            }
-
-## /auth/signin
-
-### Signin user [POST]
-+ Request (application/json)
-  + Body
-
-            {
-              "email": "ahmed@mail.com",
-              "password": "password",
-            }
-
-+ Response 200 (application/json)
-
-  + Body
-
-            {
-              "status": "success",
-              "data": {
-                  "token": "tfdfhdjfyreu68rehnfdjhfdjkfhcxcxh4545jfhd",
-                  "id": "dcc00a10-06e2-11ea-8f0e-9168c8a7677c",
-                  "username": "ahm",
-                  "firstName": "Ahmed",
-                  "lastName": "Jude",
-                  "email": "ahmed@mail.com",
-                  "password": "password",
-                  "gender": "male",
-                  "mobile": "079445322",
-                  "address": "34 Fito",
-                  "department": "sales",
-                  "role": "ceo",
-                  "type": "user",
-                  "createdAt": "2015-08-05T08:40:51.620Z",
-                  "updatedAt": "2015-08-05T08:40:51.620Z"
-              },
-            }
-
-+ Response 401 (application/json)
-
-  + Body
-
-            {
-              "status": "error",
-              "error": "Invalid authentication credentials.",
-            }
-
-+ Response 404 (application/json)
-
-  + Body
-
-            {
-              "status": "error",
-              "error": "No user by that email found",
-            }
-
-
-# Group Comments Collection
-
-## /comments/{id}/flag
-
-### Post a flag [POST]
-
-+ Parameters
-
-  + id (string) - ID of the article (uuid/v1)
-
-+ Request (application/json)
-
-  + Headers
-
-            Authorization: 'Bearer 4567890tyrehhr6775454h54h5hfdhdfhjdjrjr'
-
-  + Body
-
-            {
-              "comment": "0957abd0-06d6-11ea-8d1e-d1fcfe25170f",
-              "feedback": "I found this inappropriate...",
-              "userId": "a4e45td0-064f-11ea-bda7-0f1cd9030e30"
-            }
-
-+ Response 201 (application/json)
-
-  + Body
-
-            {
-              "status": "success",
-              "data": {
-                  "id": "1e8139f0-06ee-11ea-8f0e-9168c8a7677c",
-                  "feedback": "I found this inappropriate...",
-                  "user": {
-                      "id": "a4e45td0-064f-11ea-bda7-0f1cd9030e30",
-                      "username": "tommy",
-                  },
-                  "comment": {
-                    "id": "671b2a30-06cc-11ea-8d1e-d1fcfe25170f",
-                  },
-                  "createdAt": "2015-08-05T08:40:51.620Z",
-                  "updatedAt": "2015-08-05T08:40:51.620Z",
-              },
-            }
-
-+ Response 401 (application/json)
-
-  + Body
-
-            {
-                "status": "error",
-                "error": "Not authorized",
-            }
-
-+ Response 422 (application/json)
-
-  + Body
-
-            {
-                "status": "error",
-                "error": "Bad data",
-            }
-
-+ Response 404 (application/json)
-
-    + Body
-
-            {
-              "status": "error",
-              "error": "No comment found by that identifier."
-            }
+  + id (string) - ID of the comment (uuid/v1)
 
 ### Delete A Comment [DELETE]
 
