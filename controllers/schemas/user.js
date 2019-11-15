@@ -24,6 +24,8 @@ const register = Joi.object({
 
   email: Joi.string().email().required(),
 
+  mobile: Joi.string(),
+
   address: Joi.string().min(4),
 
   type: Joi.allow('user', 'admin').default('user'),
