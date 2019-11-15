@@ -17,12 +17,14 @@ const stripPassword = (user) => ({
   department: user.department,
   address: user.address,
   type: user.type,
-  createdAt: user.create_at,
+  createdAt: user.created_at,
   updatedAt: user.updated_at,
 });
 
+/*
+ * Signin a user
+ */
 async function signin(req, res) {
-  console.log('Req body signin', req.body);
   const { error } = schema.signin.validate(req.body);
   if (error) {
     return res.status(422).json({
@@ -37,9 +39,10 @@ async function signin(req, res) {
   });
 
   if (!user) {
+    const userField = req.body.email ? 'email' : 'username';
     return res.status(404).json({
       status: 'error',
-      error: 'No user by that email found',
+      error: `No user by that ${userField} found`,
     });
   }
 
@@ -59,6 +62,9 @@ async function signin(req, res) {
   });
 }
 
+/*
+ * Register a new user
+ */
 async function register(req, res, next) {
   if (!res.locals.isAdmin) {
     return res.status(401).json({
@@ -99,6 +105,9 @@ async function register(req, res, next) {
   }
 }
 
+/*
+ * Edit a user
+ */
 const edit = async (req, res, next) => {
   const { error } = schema.edit.validate(req.body);
 
