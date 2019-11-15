@@ -22,11 +22,17 @@ async function create(req, res, next) {
     joiRes = schema.commentAdd.validate(req.body);
     PostModel = Comment;
   } else {
-    return res.boom.badData('Please check your data and try again.');
+    return res.status(422).json({
+      status: 'error',
+      error: joiRes.error.message,
+    });
   }
 
   if (joiRes.error) {
-    return res.boom.badData(joiRes.error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: joiRes.error.message,
+    });
   }
 
   if (req.body.userId !== res.locals.userId) {
@@ -46,9 +52,10 @@ async function create(req, res, next) {
     } else {
       post = 'comment';
     }
-    return res.boom.notFound(
-      `The specified ${post} does not exist.`,
-    );
+    return res.status(404).json({
+      status: 'error',
+      error: `The specified ${post} does not exist.`,
+    });
   }
 
   if (article) {
@@ -112,7 +119,10 @@ async function findById(req, res) {
   const theFlag = await Flag.findById(req.params.id);
 
   if (!theFlag) {
-    return res.boom.notFound('No flag found by that identifier');
+    return res.status(404).json({
+      status: 'error',
+      error: 'No flag found by that identifier',
+    });
   }
   return res.json({
     status: 'success',
@@ -125,17 +135,26 @@ async function findById(req, res) {
  */
 async function edit(req, res, next) {
   if (!res.locals.isAdmin) {
-    return res.boom.unauthorized('Insufficient privileges to edit a flag.');
+    return res.status(401).json({
+      status: 'error',
+      error: 'Insufficient privileges to edit a flag.',
+    });
   }
 
   const { error } = schema.edit.validate(req.body);
   if (error) {
-    return res.boom.badData(error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: error.message,
+    });
   }
 
   const aFlag = await Flag.findById(req.params.id);
   if (!aFlag) {
-    return res.boom.notFound('No flag found by that identifier.');
+    return res.status(404).json({
+      status: 'error',
+      error: 'No flag found by that identifier.',
+    });
   }
 
   try {

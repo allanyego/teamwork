@@ -6,7 +6,10 @@ const schema = require('./schemas/category');
 async function create(req, res) {
   const { error } = schema.add.validate(req.body);
   if (error) {
-    return res.boom.badData(error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: error.message,
+    });
   }
 
   const theCategory = await Category.create(req.body);
@@ -24,7 +27,10 @@ async function findById(req, res) {
   const theCategory = await Category.findById(req.params.id);
 
   if (!theCategory) {
-    return res.boom.notFound('No category by that identifier.');
+    return res.status(404).json({
+      status: 'error',
+      error: 'No category by that identifier.',
+    });
   }
   return res.json({
     status: 'success',
@@ -38,12 +44,18 @@ async function findById(req, res) {
 async function edit(req, res) {
   const { error } = schema.edit.validate(req.body);
   if (error) {
-    return res.boom.badData(error.message);
+    return res.status(422).json({
+      status: 'error',
+      error: error.message,
+    });
   }
 
   const theCategory = await Category.findById(req.params.id);
   if (!theCategory) {
-    return res.boom.notFound('No category by that identifier.');
+    return res.status(404).json({
+      status: 'error',
+      error: 'No category by that identifier.',
+    });
   }
 
   const opts = { name: req.body.name, id: req.params.id };

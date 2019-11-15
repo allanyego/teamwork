@@ -19,7 +19,10 @@ const auth = (req, res, next) => {
       res.boom.unauthorized('You need to set the authorization header');
     }
   } catch (e) {
-    next(e);
+    res.status(500).json({
+      status: 'error',
+      error: 'There was an error authenticating this user.',
+    });
   }
 };
 

@@ -32,7 +32,7 @@ const register = Joi.object({
   .and('username', 'lastName', 'email', 'password');
 
 const signin = Joi.object({
-  email: Joi.string().email().lowercase().required(),
+  email: Joi.string().email().lowercase(),
   password: Joi.string().min(8).required().strict(),
   username: Joi.string()
     .alphanum()
