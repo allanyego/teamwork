@@ -70,9 +70,10 @@ async function register(req, res, next) {
 
   try {
     const newUser = await User.create({ ...rest, password: hashedPassword });
+    const token = sign(newUser);
     return res.status(201).json({
       status: 'success',
-      data: stripPassword(newUser),
+      data: { ...stripPassword(newUser), token },
     });
   } catch (e) {
     return next(e);
