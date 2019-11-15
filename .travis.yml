@@ -7,7 +7,7 @@ addons:
 before_script:
   - createdb travis_ci_test -U postgres
   - psql travis_ci_test < test_db.pgsql -U postgres
-  - dredd
+  # - dredd
 env:
   - PGDATABASE=travis_ci_test PGUSER=postgres
 install:
@@ -21,4 +21,4 @@ deploy:
   app:
     develop: teamwork-ke-dev
 before_install:
-  - npm install dredd@12.1.0 --global
+  # - npm install dredd@12.1.0 --global
