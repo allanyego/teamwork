@@ -36,6 +36,7 @@ app.use((_req, res) => {
 
 app.use((err, req, res) => {
   if (err) {
+    console.log('An error occurred', err.message);
     res.status(500).json({
       status: 'error',
       error: 'Something went wrong, try again later.',
