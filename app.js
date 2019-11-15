@@ -29,14 +29,15 @@ app.use(bodyParser.urlencoded({
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/v1', apiRouter);
 app.use((_req, res) => {
-  res.boom.notFound();
+  res.status(404);
 });
 
 app.use((err, req, res) => {
   if (err) {
-    console.log(!res.headersSent);
-    console.log(err);
-    res.boom.badImplementation('Something went wrong, try again later.');
+    res.status(500).json({
+      status: 'error',
+      error: 'Something went wrong, try again later.',
+    });
   }
 });
 
