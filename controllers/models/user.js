@@ -18,14 +18,15 @@ const findById = (id) => new Promise((resolve, reject) => {
 const create = async (user) => new Promise((resolve, reject) => {
   const userId = uuid();
   const insertQuery = 'INSERT INTO users'
-    + '(id, first_name, last_name, email, username, gender, role, department, password)'
-    + ' VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)';
+    + '(id, first_name, last_name, email, username, gender, role, department, password, type)'
+    + ' VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)';
   const {
     firstName, lastName, username, gender, email,
-    role, department, password: hashedPassword,
+    role, department, password: hashedPassword, type,
   } = user;
   const values = [
     userId, firstName, lastName, email, username, gender, role, department, hashedPassword,
+    type,
   ];
   query(insertQuery, values, (err) => {
     if (err) {

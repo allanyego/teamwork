@@ -27,7 +27,6 @@ const stripPassword = (user) => ({
 async function signin(req, res) {
   const { error } = schema.signin.validate(req.body);
   if (error) {
-    console.log('JOI Err', error.message);
     return res.status(422).json({
       status: 'error',
       error: error.message,
@@ -40,7 +39,6 @@ async function signin(req, res) {
   });
 
   if (!user) {
-    console.log('No user res');
     const userField = req.body.email ? 'email' : 'username';
     return res.status(404).json({
       status: 'error',
@@ -52,7 +50,7 @@ async function signin(req, res) {
   if (valid) {
     const token = sign(user);
     delete user.password;
-    console.log('Sending user', user);
+
     return res.json({
       status: 'success',
       data: { ...stripPassword(user), token },
