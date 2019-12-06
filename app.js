@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
+const methodOverride = require('method-override');
 // const boom = require('express-boom');
 // const cors = require('cors');
 
@@ -21,6 +22,7 @@ function cors() {
 const app = express();
 
 // app.use(boom());
+app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -32,6 +34,7 @@ app.use((_req, res) => {
 
 app.use((err, req, res) => {
   if (err) {
+    console.log('An error occurred', err.message);
     res.status(500).json({
       status: 'error',
       error: 'Something went wrong, try again later.',
