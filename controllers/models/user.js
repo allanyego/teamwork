@@ -26,7 +26,7 @@ const create = async (user) => new Promise((resolve, reject) => {
   } = user;
   const values = [
     userId, firstName, lastName, email, username, gender, role, department, hashedPassword,
-    type,
+    type || 'user',
   ];
   query(insertQuery, values, (err) => {
     if (err) {
