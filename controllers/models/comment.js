@@ -142,7 +142,7 @@ async function find({ userId, gif, article }) {
   }
 
   const foundComments = await query(commentsQuery);
-  // Map through each row and returning a nested object
+  // Map through each row and return a nested object
   return foundComments.rows.map(async (row) => {
     const comment = await findById(row.id);
     return comment;

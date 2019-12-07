@@ -6,6 +6,7 @@ const { articlesRouter } = require('./articles');
 const { authRouter } = require('./auth');
 const { gifRouter } = require('./gifs');
 const { commentsRouter } = require('./comments');
+const { categoriesRouter } = require('./categories');
 
 const apiRouter = express.Router();
 
@@ -29,6 +30,7 @@ apiRouter.use('/auth', authRouter);
 apiRouter.use('/articles', articlesRouter);
 apiRouter.use('/comments', commentsRouter);
 apiRouter.use('/gifs', gifRouter);
+apiRouter.use('/categories', categoriesRouter);
 
 module.exports = {
   apiRouter,

@@ -31,12 +31,12 @@ async function create(req, res, next) {
     });
   }
 
-  if (req.body.userId !== res.locals.userId) {
-    return res.status(200).json({
-      status: 'error',
-      error: 'You can only post comments for yourself',
-    });
-  }
+  // if (req.body.userId !== res.locals.userId) {
+  //   return res.status(200).json({
+  //     status: 'error',
+  //     error: 'You can not post comments for yourself',
+  //   });
+  // }
 
   const aPost = await PostModel.findById(gif || article);
   if (!aPost) {
@@ -58,7 +58,7 @@ async function create(req, res, next) {
 }
 
 /**
- * GET all comments (most probably by user or post)
+ * GET all comments (by user or post)
  */
 async function find(req, res) {
   const { user, gif, article } = req.query;

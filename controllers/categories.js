@@ -1,9 +1,27 @@
 const Category = require('./models/category');
 const schema = require('./schemas/category');
+
+/**
+ * GET all categories
+ */
+async function find(req, res) {
+  const categories = await Category.find();
+  return res.status(200).json({
+    status: 'success',
+    data: categories,
+  });
+}
+
 /**
  * POST a new category
  */
 async function create(req, res) {
+  if (!res.locals.isAdmin) {
+    return res.status(401).json({
+      status: 'error',
+      error: 'Only an admin can add a new category',
+    });
+  }
   const { error } = schema.add.validate(req.body);
   if (error) {
     return res.status(422).json({
@@ -78,6 +96,7 @@ async function edit(req, res) {
 // }
 
 module.exports = {
+  find,
   create,
   findById,
   edit,
