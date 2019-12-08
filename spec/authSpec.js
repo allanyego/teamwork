@@ -5,7 +5,7 @@ const uuid = require('uuid/v1');
 const { server } = require('../server');
 const { query } = require('../db');
 
-describe('/auth', () => {
+xdescribe('/auth', () => {
   beforeAll(async () => {
     // A test admin to create employee accounts
     const insertAdminQuery = 'INSERT INTO users'

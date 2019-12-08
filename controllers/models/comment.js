@@ -117,31 +117,49 @@ async function create({
 /**
  * GET all comments
  */
-async function find({ userId, gif, article }) {
+async function find({
+  userId, gif, article, findFlagged, count,
+}) {
   let isWhered = false;
   const values = [];
   let varCounter = 1;
   let commentsQuery = 'SELECT id FROM comments';
 
-  if (userId) {
-    commentsQuery += ` WHERE (user_id=$${varCounter})`;
-    values.push(userId);
-    isWhered = true;
-    varCounter += 1;
-  }
-  if (gif || article) {
-    const post = {
-      id: gif || article,
-      table: gif ? 'gif_comments' : 'article_comments',
-      field: gif ? 'gif' : 'article',
-    };
+  if (findFlagged) {
+    commentsQuery += ' JOIN comment_flags cf ON (cf.comment=id) JOIN flags f '
+      + 'ON (f.id=cf.flag) WHERE (status=$1)';
+    values.push('pending');
+  } else {
+    if (userId) {
+      commentsQuery += ` WHERE (user_id=$${varCounter})`;
+      values.push(userId);
+      isWhered = true;
+      varCounter += 1;
+    }
+    if (gif || article) {
+      const post = {
+        id: gif || article,
+        table: gif ? 'gif_comments' : 'article_comments',
+        field: gif ? 'gif' : 'article',
+      };
 
-    commentsQuery += `${isWhered ? ' AND' : ' WHERE'} id IN (SELECT comment
-      FROM ${post.table} WHERE (${post.field}=$${varCounter}))`;
-    values.push(post.id);
+      if (count) {
+        commentsQuery = `SELECT count(*) FROM ${post.table} WHERE (${post.field}=$1)`;
+        values.length = 0;
+        values.push(gif || article);
+      } else {
+        commentsQuery += `${isWhered ? ' AND' : ' WHERE'} id IN (SELECT comment
+          FROM ${post.table} WHERE (${post.field}=$${varCounter}))`;
+        values.push(post.id);
+      }
+    }
   }
 
-  const foundComments = await query(commentsQuery);
+  const foundComments = await query(commentsQuery, values);
+  if (count) {
+    const [data] = foundComments.rows;
+    return data;
+  }
   // Map through each row and return a nested object
   return foundComments.rows.map(async (row) => {
     const comment = await findById(row.id);

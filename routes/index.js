@@ -12,8 +12,6 @@ const apiRouter = express.Router();
 
 apiRouter.use((req, res, next) => {
   console.log(req.method, req.path);
-  console.log('mime-type:', req.get('Content-Type'));
-  console.log('Body', req.body);
   next();
 });
 

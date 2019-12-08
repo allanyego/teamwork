@@ -6,7 +6,7 @@ const { sign } = require('../controllers/helpers/sign');
 const { server } = require('../server');
 const { query } = require('../db');
 
-describe('Categories', () => {
+xdescribe('Categories', () => {
   beforeAll(async () => {
     // A test admin to create employee accounts
     const insertAdminQuery = 'INSERT INTO users'
@@ -30,7 +30,7 @@ describe('Categories', () => {
   afterAll(async () => {
     await query('DELETE FROM users WHERE id=$1', [this.admin.id]);
     if (this.category) {
-      await query('DELETE FROM categories WHERE id=$1', [this.category.id])
+      await query('DELETE FROM categories WHERE id=$1', [this.category.id]);
     }
   });
 
@@ -42,7 +42,7 @@ describe('Categories', () => {
       };
 
       request(server)
-        .post(`/api/v1/categories`)
+        .post('/api/v1/categories')
         .set('Authorization', `Bearer ${this.adminToken}`)
         .send(newCategory)
         .expect(201)

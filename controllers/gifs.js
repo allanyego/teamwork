@@ -68,8 +68,13 @@ async function create(req, res, next) {
  */
 async function find(req, res, next) {
   try {
-    const { category } = req.query;
-    const gifs = await Gif.find({ category });
+    const {
+      category, flagged, user, count,
+    } = req.query;
+    const findFlagged = !!flagged;
+    const gifs = await Gif.find({
+      category, findFlagged, user, count,
+    });
     return res.json({
       status: 'success',
       data: gifs,

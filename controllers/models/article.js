@@ -34,24 +34,43 @@ const create = async (article) => new Promise((resolve, reject) => {
   });
 });
 
-const find = async ({ category }) => new Promise((resolve, reject) => {
+const find = async ({
+  category, findFlagged, user, count,
+}) => new Promise((resolve, reject) => {
   const values = [];
-  let findQuery = 'SELECT a.id, a.title, a.text, a.created_at, a.updated_at, '
-    + 'c.id as cat_id, c.name AS cat_name, u.id as u_id, u.username '
-    + 'FROM articles a JOIN categories c ON (a.category=c.id) JOIN users u ON '
-    + '(a.user_id=u.id)';
-
-  if (category) {
-    findQuery += ' WHERE (c.name=$1)';
-    values.push(category);
+  let findQuery;
+  if (findFlagged) {
+    findQuery = 'SELECT a.id, a.title, a.text, a.created_at, a.updated_at, '
+      + 'c.id as cat_id, c.name AS cat_name, u.id as u_id, u.username '
+      + 'FROM articles a JOIN categories c ON (a.category=c.id) JOIN users u ON '
+      + '(a.user_id=u.id) JOIN article_flags af ON (af.article=a.id) JOIN flags f '
+      + 'ON (f.id=af.flag) WHERE (f.status=$1)';
+    values.push('pending');
+  } else if (user && count) {
+    findQuery = 'SELECT count(*) FROM articles a JOIN users u ON (a.user_id=u.id) '
+      + 'WHERE (u.id=$1)';
+    values.push(user);
+  } else {
+    findQuery = 'SELECT a.id, a.title, a.text, a.created_at, a.updated_at, '
+      + 'c.id as cat_id, c.name AS cat_name, u.id as u_id, u.username '
+      + 'FROM articles a JOIN categories c ON (a.category=c.id) JOIN users u ON '
+      + '(a.user_id=u.id)';
+    if (category) {
+      findQuery += ' WHERE (c.name=$1)';
+      values.push(category);
+    }
   }
 
-  findQuery += ' ORDER BY a.created_at DESC';
-
+  if (!user && !count) {
+    findQuery += ' ORDER BY a.created_at DESC';
+  }
   query(findQuery, values, (err, { rows }) => {
     if (err) {
-      console.log('Query error', err);
       return reject(err);
+    }
+    if (user && count) {
+      const [data] = rows;
+      return resolve(data);
     }
 
     const resArticles = rows.map((row) => {
@@ -124,7 +143,7 @@ const destroy = async (id) => {
     // Delete related flags
     await client.query(
       'DELETE FROM flags f WHERE f.id IN (SELECT af.flag FROM '
-        + 'article_flags af WHERE (af.article=$1))',
+      + 'article_flags af WHERE (af.article=$1))',
       [id],
     );
 

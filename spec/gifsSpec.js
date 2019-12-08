@@ -6,7 +6,7 @@ const { sign } = require('../controllers/helpers/sign');
 const { query } = require('../db');
 const { server } = require('../server');
 
-describe('Gifs - ', () => {
+xdescribe('Gifs - ', () => {
   beforeAll(async () => {
     this.originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000;

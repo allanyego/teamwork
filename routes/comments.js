@@ -1,8 +1,8 @@
 const express = require('express');
 
 const {
-  // edit,
-  // find,
+  edit,
+  find,
   // findById,
   destroy,
 } = require('../controllers/comments');
@@ -12,10 +12,10 @@ const { auth } = require('../middleware/auth');
 
 const commentsRouter = express.Router();
 
-// commentsRouter.get('/', find);
+commentsRouter.get('/', find);
 // commentsRouter.get('/:id', findById);
 commentsRouter.post('/:id/flag', auth, flagCtrl.create);
-// commentsRouter.patch('/:id', auth, edit);
+commentsRouter.patch('/:id', auth, edit);
 commentsRouter.delete('/:id', auth, destroy);
 
 module.exports = {

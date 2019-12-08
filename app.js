@@ -21,7 +21,6 @@ function cors() {
 
 const app = express();
 
-// app.use(boom());
 app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));

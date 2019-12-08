@@ -45,8 +45,14 @@ async function create(req, res, next) {
  */
 async function find(req, res, next) {
   try {
-    const { category } = req.query;
-    const articles = await Article.find({ category });
+    const {
+      category, flagged, count, user,
+    } = req.query;
+    const findFlagged = !!flagged;
+
+    const articles = await Article.find({
+      category, findFlagged, count, user,
+    });
 
     return res.json({
       status: 'success',

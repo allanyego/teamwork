@@ -61,8 +61,12 @@ async function create(req, res, next) {
  * GET all comments (by user or post)
  */
 async function find(req, res) {
-  const { user, gif, article } = req.query;
-  const resComments = await Comment.find({ userId: user, gif, article });
+  const {
+    user, gif, article, count,
+  } = req.query;
+  const resComments = await Comment.find({
+    userId: user, gif, article, count,
+  });
 
   return res.json({
     status: 'success',

@@ -158,6 +158,21 @@ describe('Articles - ', () => {
         });
       });
     });
+    describe('GET ?user=X&count=true', () => {
+      it('should respond with count of user articles', (done) => {
+        request(server)
+          .get(`/api/v1/articles/?user=${this.user.id}&count=true`)
+          .expect(200)
+          .then((resp) => {
+            const { data } = resp.body;
+            expect(data.count).toBeDefined();
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
+      });
+    });
     describe('GET /:id', () => {
       it('should respond with article with specified id', (done) => {
         request(server)
@@ -235,53 +250,43 @@ describe('Articles - ', () => {
     });
 
     describe('POST /:id/flag', () => {
-      describe('user sends a new flag', () => {
-        it('should respond with posted flag', (done) => {
-          const flag = {
-            feedback: 'I find this offensive.',
-            userId: this.commenter.id,
-            article: this.article.id,
-          };
+      it('should respond with posted flag', (done) => {
+        const flag = {
+          feedback: 'I find this offensive.',
+          userId: this.commenter.id,
+          article: this.article.id,
+        };
 
-          request(server)
-            .post(`/api/v1/articles/${this.article.id}/flag`)
-            .send(flag)
-            .set('Authorization', `Bearer ${this.commenterToken}`)
-            .expect(201)
-            .then((resp) => {
-              const { data } = resp.body;
-              expect(data.status).toEqual('pending');
-              expect(data.feedback).toEqual(flag.feedback);
-              this.flag = data;
-              done();
-            })
-            .catch((err) => {
-              done(err);
-            });
-        });
+        request(server)
+          .post(`/api/v1/articles/${this.article.id}/flag`)
+          .send(flag)
+          .set('Authorization', `Bearer ${this.commenterToken}`)
+          .expect(201)
+          .then((resp) => {
+            const { data } = resp.body;
+            expect(data.status).toEqual('pending');
+            expect(data.feedback).toEqual(flag.feedback);
+            this.flag = data;
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
       });
-      describe('user sends similar flag details as before', () => {
-        it('should respond with an error message', (done) => {
-          const flag = {
-            feedback: 'I find this offensive.',
-            userId: this.commenter.id,
-            article: this.article.id,
-          };
-
-          request(server)
-            .post(`/api/v1/articles/${this.article.id}/flag`)
-            .send(flag)
-            .set('Authorization', `Bearer ${this.commenterToken}`)
-            .expect(200)
-            .then((resp) => {
-              const { status } = resp.body;
-              expect(status).toEqual('error');
-              done();
-            })
-            .catch((err) => {
-              done(err);
-            });
-        });
+    });
+    describe('user fetches flagged articles', () => {
+      it('should respond with an array', (done) => {
+        request(server)
+          .get('/api/v1/articles?flagged=true')
+          .expect(200)
+          .then((resp) => {
+            const { data } = resp.body;
+            expect(data[0]).toBeDefined();
+            done();
+          })
+          .catch((err) => {
+            done(err);
+          });
       });
     });
   });
@@ -302,6 +307,23 @@ describe('Articles - ', () => {
             done(err);
           });
       });
+    });
+  });
+
+  describe('GET /comments?count=true&article=X', () => {
+    it('should respond with comment count', (done) => {
+      request(server)
+        .get(`/api/v1/comments?article=${this.article.id}&count=true`)
+        .expect(200)
+        .then((resp) => {
+          const { data } = resp.body;
+          console.log('Jasmine res', resp.body);
+          expect(data.count).toBeDefined();
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
     });
   });
 

@@ -55,18 +55,36 @@ const create = async ({
 /**
  * GET gif post by id
  */
-const find = async ({ category }) => {
+const find = async ({
+  category, findFlagged, user, count,
+}) => {
   const values = [];
-  let findQuery = 'SELECT g.id, g.title, g.image, g.created_at, g.updated_at, '
+  let findQuery;
+  if (findFlagged) {
+    findQuery = 'SELECT g.id, g.title, g.image, g.created_at, g.updated_at, '
+    + ' c.id as cat_id, c.name AS cat_name, u.id as u_id, u.username FROM '
+    + 'gifs g JOIN categories c ON (g.category=c.id) JOIN users u ON '
+    + '(g.user_id=u.id) JOIN gif_flags gf ON (gf.gif=g.id) JOIN flags f ON '
+    + '(f.id=gf.flag) WHERE (f.status=$1)';
+    values.push('pending');
+  } else if (user && count) {
+    findQuery = 'SELECT count(*) FROM gifs g JOIN users u ON (g.user_id=u.id) '
+      + 'WHERE (u.id=$1)';
+    values.push(user);
+  } else {
+    findQuery = 'SELECT g.id, g.title, g.image, g.created_at, g.updated_at, '
     + ' c.id as cat_id, c.name AS cat_name, u.id as u_id, u.username FROM '
     + 'gifs g JOIN categories c ON (g.category=c.id) JOIN users u ON '
     + '(g.user_id=u.id)';
 
-  if (category) {
-    findQuery += ' WHERE (c.name=$1)';
-    values.push(category);
+    if (category) {
+      findQuery += ' WHERE (c.name=$1)';
+      values.push(category);
+    }
   }
-  findQuery += ' ORDER BY g.created_at DESC';
+  if (!user && !count) {
+    findQuery += ' ORDER BY g.created_at DESC';
+  }
 
   const foundGifs = await query(findQuery, values);
   // Map through each row and returning a nested object
