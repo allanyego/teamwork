@@ -6,7 +6,7 @@ const { sign } = require('../controllers/helpers/sign');
 const { server } = require('../server');
 const { query } = require('../db');
 
-xdescribe('Categories', () => {
+describe('Categories', () => {
   beforeAll(async () => {
     // A test admin to create employee accounts
     const insertAdminQuery = 'INSERT INTO users'
